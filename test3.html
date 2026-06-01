@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usama Outfitters | Engineered Streetwear</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ===== CSS VARIABLES & RESET ===== */
+        :root {
+            --black: #050505; --white: #ffffff; --gold: #c5a059;
+            --grey: #121212; --neon: #e0ff00; --wa-green: #25D366;
+            --text-gray: #888888;
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-tech: 'Space Mono', monospace;
+            --transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html { scroll-behavior: smooth; }
+
+        body { 
+            font-family: var(--font-body); background-color: var(--black); 
+            color: var(--white); overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased; 
+        }
+
+        /* ===== PREMIUM AMBIENT EFFECTS ===== */
+        #cursor-glow {
+            position: fixed; top: 0; left: 0; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(224, 255, 0, 0.08) 0%, transparent 60%);
+            transform: translate(-50%, -50%); pointer-events: none; z-index: 1; 
+            mix-blend-mode: screen; transition: width 0.4s, height 0.4s;
+        }
+
+        .ambient-particles {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 0; opacity: 0.4;
+            background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 100px 100px;
+            animation: particleDrift 40s linear infinite;
+        }
+        @keyframes particleDrift { 0% { background-position: 0 0; } 100% { background-position: 1000px 1000px; } }
+
+        /* ===== SMOOTH PAGE TRANSITIONS ===== */
+        main { 
+            position: relative; z-index: 10;
+            transition: opacity 0.4s ease, filter 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        main.page-transitioning { 
+            opacity: 0; filter: blur(15px); transform: scale(0.97); 
+        }
+
+        /* ===== PRELOADER ===== */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: var(--black); z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.8s, filter 0.8s;
+        }
+        .sys-boot { font-family: var(--font-tech); font-size: 12px; color: var(--text-gray); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        .logo-reveal { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 4rem); font-weight: 800; letter-spacing: 5px; color: var(--white); overflow: hidden; }
+        .logo-reveal span { display: inline-block; transform: translateY(100%); animation: slideUpReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s; }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes slideUpReveal { to { transform: translateY(0); } }
+        @keyframes gridPan { 0% { transform: translateY(0); } 100% { transform: translateY(50px); } }
+        
+        /* The Warp Drive Effect for Button */
+        .warp-speed { animation: warpDrive 0.6s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
+        @keyframes warpDrive { 0% { transform: scale(1) translateZ(0); filter: blur(0); opacity: 1; } 100% { transform: scale(4) translateZ(500px); filter: blur(20px); opacity: 0; } }
+        
+        /* Premium Stagger Reveal */
+        @keyframes premiumReveal {
+            0% { opacity: 0; transform: perspective(1000px) translateY(50px) rotateX(-15deg) scale(0.95); filter: blur(10px); }
+            100% { opacity: 1; transform: perspective(1000px) translateY(0) rotateX(0) scale(1); filter: blur(0); }
+        }
+        .stagger-burst .tilt-card { opacity: 0; animation: premiumReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Scroll Reveals */
+        .reveal-up { opacity: 0; transform: translateY(50px); filter: blur(5px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-up.in-view { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+        /* ===== BUTTON LIGHT SWEEP ===== */
+        button, .btn-primary, .explore-btn, .checkout-btn, .back-btn { position: relative; overflow: hidden; cursor: pointer; }
+        button::after, .btn-primary::after, .explore-btn::after, .checkout-btn::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: skewX(-25deg); transition: 0s; z-index: 10; pointer-events: none;
+        }
+        button:hover::after, .btn-primary:hover::after, .explore-btn:hover::after, .checkout-btn:hover::after {
+            left: 200%; transition: 0.7s ease-in-out;
+        }
+
+        /* ===== HEADER ===== */
+        header { 
+            position: fixed; top: 0; left: 0; width: 100%; padding: 25px 40px; z-index: 1000; 
+            display: flex; justify-content: space-between; align-items: center; 
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); background: transparent; 
+        }
+        header.scrolled { background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(20px); padding: 15px 40px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .brand { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--white); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; z-index: 2;}
+        .nav-links { display: none; gap: 40px; z-index: 2;}
+        @media (min-width: 900px) { .nav-links { display: flex; } }
+        .nav-links button { background: none; border: none; color: var(--text-gray); font-family: var(--font-tech); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; padding: 5px 0;}
+        .nav-links button:hover, .nav-links button.active { color: var(--neon); text-shadow: 0 0 15px rgba(224,255,0,0.4); }
+        .header-actions { display: flex; gap: 20px; align-items: center; z-index: 2;}
+        .cart-btn { background: none; border: none; color: var(--white); font-family: var(--font-tech); font-size: 11px; display: flex; align-items: center; gap: 8px; transition: 0.3s;}
+        .cart-btn:hover { color: var(--neon); }
+        .cart-badge { background: var(--neon); color: var(--black); width: 22px; height: 22px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; transition: 0.3s; }
+
+        /* ===== ENGINEERED 3D HERO ===== */
+        .hero-wrapper { perspective: 2000px; height: 100vh; overflow: hidden; background: radial-gradient(circle at center, #111 0%, #000 100%); }
+        .hero { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; transition: transform 0.15s ease-out; }
+        .hero-grid { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 60px 60px; transform: rotateX(70deg) translateZ(-200px); animation: gridPan 4s linear infinite; pointer-events: none; }
+        
+        .hero-title-3d { position: absolute; text-align: center; transform-style: preserve-3d; transform: translateZ(120px); pointer-events: none; }
+        .hero-title-3d h1 { font-family: var(--font-display); font-size: clamp(4rem, 10vw, 10rem); font-weight: 800; line-height: 0.9; text-transform: uppercase; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.9); position: relative; }
+        .hero-title-3d h1::before { content: 'USAMA'; position: absolute; left: 0; top: 0; width: 100%; color: var(--white); -webkit-text-stroke: 0px; transform: translateZ(-40px); opacity: 0.4; filter: blur(8px); }
+        
+        .tech-badge { font-family: var(--font-tech); font-size: 12px; color: var(--neon); letter-spacing: 4px; display: inline-block; margin-bottom: 20px; border: 1px solid rgba(224,255,0,0.5); padding: 8px 20px; transform: translateZ(180px); background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
+        
+        .float-panel { position: absolute; border: 1px solid rgba(255,255,255,0.1); background: rgba(10,10,10,0.6); backdrop-filter: blur(15px); padding: 10px; transform-style: preserve-3d; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .float-panel img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(80%) contrast(1.1); transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .float-panel:hover img { filter: grayscale(0%) contrast(1.2); }
+        .p1 { width: 280px; height: 380px; top: 12%; left: 8%; transform: translateZ(80px) rotateY(15deg) rotateX(5deg); }
+        .p2 { width: 320px; height: 420px; bottom: 8%; right: 8%; transform: translateZ(180px) rotateY(-15deg) rotateX(-5deg); }
+        
+        .explore-btn { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%) translateZ(220px); background: var(--white); color: var(--black); font-family: var(--font-tech); padding: 16px 45px; font-size: 13px; font-weight: 700; border: none; text-transform: uppercase; transition: all 0.4s; box-shadow: 0 10px 30px rgba(255,255,255,0.15); border-radius: 2px;}
+        .explore-btn:hover { background: var(--neon); box-shadow: 0 15px 40px rgba(224, 255, 0, 0.5); transform: translateX(-50%) translateZ(240px) scale(1.05); }
+
+        /* ===== SCROLL 3D OFFERS VAULT ===== */
+        .offers-vault { padding: 120px 5%; max-width: 1600px; margin: 0 auto; perspective: 1500px; }
+        .vault-header { text-align: center; font-family: var(--font-tech); color: var(--neon); font-size: 13px; letter-spacing: 4px; margin-bottom: 70px; opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+        .vault-header.in-view { opacity: 1; transform: translateY(0); }
+        
+        .vault-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; transform-style: preserve-3d; }
+        
+        /* Adding 3D Reactivity to Vault Cards */
+        .vault-card { 
+            position: relative; background: rgba(20,20,20,0.6); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05); padding: 30px; text-align: center; 
+            transform-style: preserve-3d; cursor: pointer; transition: transform 0.15s ease-out, border-color 0.4s;
+            opacity: 0; transform: perspective(1000px) rotateX(-30deg) translateY(80px);
+        }
+        .vault-card.in-view { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0); transition: opacity 0.8s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        /* Animated Hover Border Glow for Vault */
+        .vault-card::after {
+            content: ''; position: absolute; inset: -1px; z-index: -1;
+            background: linear-gradient(45deg, transparent, var(--neon), transparent);
+            opacity: 0; transition: opacity 0.5s; filter: blur(5px);
+        }
+        .vault-card:hover::after { opacity: 0.5; }
+        .vault-card:hover { border-color: rgba(255,255,255,0.2); }
+
+        .vault-card img { width: 100%; height: 350px; object-fit: cover; margin-bottom: 25px; filter: contrast(1.1) grayscale(30%); transition: 0.5s; transform: translateZ(40px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .vault-card:hover img { filter: contrast(1.1) grayscale(0%); transform: translateZ(60px) scale(1.05); }
+        .vault-card h3 { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; margin-bottom: 12px; transform: translateZ(30px); transition: color 0.3s;}
+        .vault-card:hover h3 { color: var(--neon); }
+        .vault-card p { font-family: var(--font-tech); font-size: 12px; color: var(--text-gray); margin-bottom: 25px; transform: translateZ(20px);}
+        .vault-card button { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--white); padding: 12px 35px; font-family: var(--font-tech); font-size: 11px; transform: translateZ(30px); transition: 0.4s; }
+        .vault-card:hover button { background: var(--white); color: var(--black); }
+
+        /* ===== PAGES / FOLDERS / PRODUCTS ===== */
+        .page-section { display: none; padding-top: 100px; min-height: 100vh;}
+        .page-section.active { display: block; }
+        #home.active { padding-top: 0; }
+
+        .section-header-tech { padding: 60px 5%; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 50px; position: relative; }
+        .section-header-tech h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 4.5rem); text-transform: uppercase; }
+        .sys-info { font-family: var(--font-tech); font-size: 11px; color: var(--text-gray); position: absolute; top: 30px; left: 5%; }
+
+        .folders-view { display: flex; flex-wrap: wrap; gap: 40px; padding: 0 5% 100px; justify-content: center; transition: var(--transition); }
+        .folders-view.hidden { opacity: 0; transform: scale(0.95); pointer-events: none; position: absolute; visibility: hidden; filter: blur(10px);}
+        
+        .folder-card { width: calc(50% - 20px); max-width: 700px; height: 550px; position: relative; cursor: pointer; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); background: var(--grey); border-radius: 4px;}
+        @media(max-width: 768px) { .folder-card { width: 100%; height: 450px; } }
+        .folder-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s; transform: scale(1.05); }
+        .folder-card:hover img { filter: grayscale(0%); transform: scale(1); }
+        .folder-label { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); display: flex; justify-content: space-between; align-items: flex-end; }
+        .folder-label h2 { font-family: var(--font-display); font-size: 2.5rem; text-transform: uppercase; line-height: 1;}
+        .folder-stats { font-family: var(--font-tech); font-size: 11px; color: var(--neon); transition: 0.3s;}
+        .folder-card:hover .folder-stats { text-shadow: 0 0 10px rgba(224,255,0,0.5); }
+
+        .products-view { display: none; padding: 0 5% 100px; }
+        .products-view.active { display: block; }
+        .view-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 25px; }
+        .back-btn { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--white); font-family: var(--font-tech); font-size: 12px; padding: 12px 25px; transition: var(--transition); display: flex; align-items: center; gap: 10px; border-radius: 2px;}
+        .back-btn:hover { background: var(--white); color: var(--black); }
+        .current-folder-title { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; color: var(--neon); letter-spacing: 2px;}
+
+        .tech-filters { display: flex; gap: 12px; flex-wrap: wrap; }
+        .t-filter { background: rgba(255,255,255,0.03); border: 1px solid transparent; color: var(--text-gray); font-family: var(--font-tech); font-size: 11px; padding: 8px 20px; cursor: pointer; transition: all 0.4s; text-transform: uppercase; border-radius: 2px;}
+        .t-filter.active, .t-filter:hover { border-color: var(--neon); color: var(--white); background: rgba(224,255,0,0.05); box-shadow: 0 0 15px rgba(224, 255, 0, 0.15); transform: translateY(-2px);}
+
+        /* ===== ADVANCED 3D CARDS ===== */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 45px; perspective: 1200px;}
+        
+        .tilt-card { 
+            position: relative; background: var(--black); transform-style: preserve-3d; cursor: pointer; 
+            border: 1px solid rgba(255,255,255,0.03); overflow: hidden; border-radius: 4px;
+            transition: border-color 0.4s, transform 0.1s ease-out;
+        }
+        .tilt-card:hover { border-color: rgba(255,255,255,0.15); }
+        
+        /* Dynamic Glare Overlay */
+        .tilt-card::before { 
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255,255,255,var(--glare-opacity, 0)) 0%, transparent 60%); 
+            z-index: 5; pointer-events: none; transition: opacity 0.3s; 
+        }
+        
+        .card-img-wrapper { width: 100%; height: 420px; overflow: hidden; position: relative; transform: translateZ(30px); background: #111;}
+        .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s; }
+        .tilt-card:hover .card-img-wrapper img { transform: scale(1.08); filter: contrast(1.1); }
+        
+        .sys-badge { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.8); border: 1px solid var(--neon); color: var(--neon); padding: 5px 12px; font-family: var(--font-tech); font-size: 10px; text-transform: uppercase; z-index: 6; transform: translateZ(50px); backdrop-filter: blur(5px); }
+        
+        .quick-add { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.95), transparent); padding: 25px 20px 20px; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); display: flex; justify-content: center; z-index: 6; }
+        .tilt-card:hover .quick-add { transform: translateY(0); }
+        .quick-add button { width: 100%; background: var(--white); color: var(--black); border: none; padding: 12px; font-family: var(--font-tech); font-size: 11px; font-weight: 700; text-transform: uppercase; transition: 0.3s; border-radius: 2px;}
+        .quick-add button:hover { background: var(--neon); box-shadow: 0 0 15px rgba(224,255,0,0.4);}
+        
+        .card-info { padding: 25px 20px; border-top: 1px solid rgba(255,255,255,0.03); transform: translateZ(25px); background: var(--grey);}
+        .card-title { font-family: var(--font-display); font-size: 14px; text-transform: uppercase; margin-bottom: 8px; color: var(--white); letter-spacing: 1px;}
+        .card-meta { display: flex; justify-content: space-between; align-items: center; }
+        .card-category { font-family: var(--font-tech); font-size: 11px; color: var(--text-gray); text-transform: uppercase; }
+        .card-price { font-family: var(--font-tech); font-size: 13px; color: var(--neon); font-weight: 700; }
+
+        /* ===== WA & CART ===== */
+        .wa-float { position: fixed; bottom: 35px; right: 35px; width: 65px; height: 65px; background-color: var(--wa-green); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); z-index: 9000; text-decoration: none; transition: var(--transition); border: 2px solid rgba(255,255,255,0.1); }
+        .wa-float:hover { transform: scale(1.15) rotate(10deg); background-color: #1EBE5D; box-shadow: 0 15px 40px rgba(37, 211, 102, 0.6); }
+        
+        .cart-sidebar { position: fixed; top: 0; right: -500px; width: 100%; max-width: 450px; height: 100vh; background: rgba(5,5,5,0.95); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05); z-index: 2001; transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; padding: 35px; }
+        .cart-sidebar.open { right: 0; }
+        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition); backdrop-filter: blur(8px); }
+        .cart-overlay.open { opacity: 1; visibility: visible; }
+        
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);}
+        .cart-header h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 24px; letter-spacing: 2px;}
+        .close-cart { background: none; border: none; color: var(--white); font-size: 28px; transition: 0.4s; }
+        .close-cart:hover { color: var(--neon); transform: rotate(90deg); }
+        
+        .cart-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding-right: 10px; }
+        .cart-items::-webkit-scrollbar { width: 3px; }
+        .cart-items::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px;}
+        
+        .cart-item { display: flex; gap: 15px; align-items: center; border: 1px solid rgba(255,255,255,0.03); padding: 12px; background: rgba(255,255,255,0.01); border-radius: 4px; transition: 0.3s;}
+        .cart-item:hover { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03);}
+        .cart-item img { width: 75px; height: 95px; object-fit: cover; border-radius: 2px;}
+        .cart-item-details { flex: 1; }
+        .cart-item-title { font-family: var(--font-display); font-size: 12px; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; }
+        .cart-item-price { color: var(--neon); font-family: var(--font-tech); font-size: 12px; }
+        .remove-item { background: none; border: none; color: #ff4444; font-family: var(--font-tech); font-size: 10px; text-transform: uppercase; margin-top: 10px; transition: 0.3s;}
+        .remove-item:hover { color: #ff0000; text-shadow: 0 0 10px rgba(255,0,0,0.5);}
+        
+        .cart-footer { margin-top: 25px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .cart-total { display: flex; justify-content: space-between; font-family: var(--font-tech); font-size: 16px; margin-bottom: 25px; }
+        .checkout-btn { width: 100%; padding: 18px; background: var(--white); color: var(--black); font-family: var(--font-tech); border: none; font-weight: 700; text-transform: uppercase; transition: 0.4s; border-radius: 2px;}
+        .checkout-btn:hover { background: var(--neon); box-shadow: 0 10px 30px rgba(224, 255, 0, 0.3);}
+        
+        footer { padding: 50px 5%; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: var(--text-gray); font-family: var(--font-tech); font-size: 11px; text-transform: uppercase; letter-spacing: 2px;}
+    </style>
+</head>
+<body>
+
+    <div id="cursor-glow"></div>
+    <div class="ambient-particles"></div>
+
+    <div id="preloader">
+        <div class="sys-boot">Initializing Core Engines...</div>
+        <h1 class="logo-reveal"><span>USAMA</span></h1>
+    </div>
+
+    <a href="https://wa.me/923001234567?text=Hello%20Usama%20Outfitters!" class="wa-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+
+    <header id="header">
+        <a class="brand" onclick="triggerSmoothTransition('home')">Usama Outfitters</a>
+        <nav class="nav-links">
+            <button onclick="triggerSmoothTransition('home')" class="active">ARCHIVE</button>
+            <button onclick="triggerSmoothTransition('streetwear')">STREETWEAR</button>
+            <button onclick="triggerSmoothTransition('premium')">PREMIUM</button>
+            <button onclick="triggerSmoothTransition('youth')">YOUTH</button>
+        </nav>
+        <div class="header-actions">
+            <button class="cart-btn" onclick="toggleCart()">BAG <span class="cart-badge" id="cartCount">0</span></button>
+        </div>
+    </header>
+
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>SYSTEM_BAG</h2><button class="close-cart" onclick="toggleCart()">×</button>
+        </div>
+        <div class="cart-items" id="cartItems"><p style="color:var(--text-gray); font-family:var(--font-tech); font-size:11px;">[ NO ITEMS DETECTED ]</p></div>
+        <div class="cart-footer">
+            <div class="cart-total"><span>TOTAL:</span><span id="cartTotalText">PKR 0</span></div>
+            <button class="checkout-btn" onclick="checkoutWhatsApp()">SECURE CHECKOUT</button>
+        </div>
+    </div>
+
+    <main id="main-content">
+        
+        <section id="home" class="page-section active">
+            <div class="hero-wrapper">
+                <div class="hero" id="heroScene">
+                    <div class="hero-grid"></div>
+                    <div id="scene3D" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; transition: transform 0.1s ease-out;">
+                        <div class="tech-badge">[ SYS.VER 3.0 / KARACHI ]</div>
+                        <div class="float-panel p1"><img src="https://images.unsplash.com/photo-1527719327859-c6ce80353573?auto=format&fit=crop&w=600&q=80" alt="Model"></div>
+                        <div class="float-panel p2"><img src="https://images.unsplash.com/photo-1517423568366-8b83523034fd?auto=format&fit=crop&w=600&q=80" alt="Model"></div>
+                        <div class="hero-title-3d"><h1>USAMA</h1></div>
+                        <button class="explore-btn" onclick="warpToArchive()">ACCESS ARCHIVE // </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="offers-vault">
+                <div class="vault-header reveal-up">[ INTERCEPTING FEATURED DROPS ]</div>
+                <div class="vault-grid">
+                    <div class="vault-card vault-reveal tilt-card" style="transition-delay: 0s;" onclick="triggerSmoothTransition('streetwear')">
+                        <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80" alt="Offer">
+                        <h3>Acid Wash Series</h3>
+                        <p>Oversized fits re-engineered for the street.</p>
+                        <button>EXPLORE</button>
+                    </div>
+                    <div class="vault-card vault-reveal tilt-card" style="transition-delay: 0.15s;" onclick="triggerSmoothTransition('premium')">
+                        <img src="https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80" alt="Offer">
+                        <h3>Premium Denim</h3>
+                        <p>Authentic Levi's & Stone Island archives.</p>
+                        <button>ACCESS</button>
+                    </div>
+                    <div class="vault-card vault-reveal tilt-card" style="transition-delay: 0.3s;" onclick="triggerSmoothTransition('youth')">
+                        <img src="https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=600&q=80" alt="Offer">
+                        <h3>Youth Protocol</h3>
+                        <p>Street aesthetics scaled for the next generation.</p>
+                        <button>VIEW</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="streetwear" class="page-section">
+            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/STREETWEAR</div><h1>Streetwear</h1></div>
+            <div class="folders-view" id="streetwear-folders">
+                <div class="folder-card reveal-up" onclick="openFolder('streetwear', 'tops', 'TOPS ARCHIVE')"><img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=800&q=80" alt="Tops Folder"><div class="folder-label"><h2>Tops</h2><span class="folder-stats">[ CLICK TO EXTRACT ]</span></div></div>
+                <div class="folder-card reveal-up" style="transition-delay: 0.2s;" onclick="openFolder('streetwear', 'bottoms', 'BOTTOMS ARCHIVE')"><img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=800&q=80" alt="Bottoms Folder"><div class="folder-label"><h2>Bottoms</h2><span class="folder-stats">[ CLICK TO EXTRACT ]</span></div></div>
+            </div>
+            <div class="products-view" id="streetwear-products">
+                <div class="view-controls"><button class="back-btn" onclick="closeFolder('streetwear')"><i class="fa-solid fa-arrow-left"></i> RETURN</button><div class="current-folder-title" id="streetwear-folder-title">TOPS</div></div>
+                <div class="tech-filters" id="streetwear-filters" style="margin-bottom: 50px;"></div>
+                <div class="product-grid" id="streetwearGrid"></div>
+            </div>
+        </section>
+
+        <section id="premium" class="page-section">
+            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/PREMIUM_BRANDS</div><h1>Premium</h1></div>
+            <div class="folders-view" id="premium-folders">
+                <div class="folder-card reveal-up" onclick="openFolder('premium', 'tops', 'PREMIUM TOPS')"><img src="https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?auto=format&fit=crop&w=800&q=80" alt="Premium Tops"><div class="folder-label"><h2>Tops</h2><span class="folder-stats">[ EXTRACT ]</span></div></div>
+                <div class="folder-card reveal-up" style="transition-delay: 0.2s;" onclick="openFolder('premium', 'bottoms', 'PREMIUM BOTTOMS')"><img src="https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=800&q=80" alt="Premium Bottoms"><div class="folder-label"><h2>Bottoms</h2><span class="folder-stats">[ EXTRACT ]</span></div></div>
+            </div>
+            <div class="products-view" id="premium-products">
+                <div class="view-controls"><button class="back-btn" onclick="closeFolder('premium')"><i class="fa-solid fa-arrow-left"></i> RETURN</button><div class="current-folder-title" id="premium-folder-title">TOPS</div></div>
+                <div class="tech-filters" id="premium-filters" style="margin-bottom: 50px;"></div>
+                <div class="product-grid" id="premiumGrid"></div>
+            </div>
+        </section>
+
+        <section id="youth" class="page-section">
+            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/YOUTH</div><h1>Youth</h1></div>
+            <div class="folders-view" id="youth-folders">
+                <div class="folder-card reveal-up" onclick="openFolder('youth', 'tops', 'YOUTH TOPS')"><img src="https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=800&q=80" alt="Youth Tops"><div class="folder-label"><h2>Tops</h2><span class="folder-stats">[ EXTRACT ]</span></div></div>
+                <div class="folder-card reveal-up" style="transition-delay: 0.2s;" onclick="openFolder('youth', 'bottoms', 'YOUTH BOTTOMS')"><img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80" alt="Youth Bottoms"><div class="folder-label"><h2>Bottoms</h2><span class="folder-stats">[ EXTRACT ]</span></div></div>
+            </div>
+            <div class="products-view" id="youth-products">
+                <div class="view-controls"><button class="back-btn" onclick="closeFolder('youth')"><i class="fa-solid fa-arrow-left"></i> RETURN</button><div class="current-folder-title" id="youth-folder-title">TOPS</div></div>
+                <div class="tech-filters" id="youth-filters" style="margin-bottom: 50px;"></div>
+                <div class="product-grid" id="youthGrid"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer><p>SYS.DEV: USAMA OUTFITTERS // KARACHI // SECURE NETWORK</p></footer>
+
+    <script>
+        // --- DATA CATALOG ---
+        const catalog = [
+            // STREETWEAR (Men) - 10 OVERSIZED SHIRTS
+            { id: 's_o1', name: 'Acid Wash Oversize', price: 1899, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o2', name: 'Heavy Boxy Blank', price: 1699, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: 'CORE', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o3', name: 'Graphic Drop-Shoulder', price: 1999, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o4', name: 'Vintage Faded Oversize', price: 2100, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: 'ARCHIVE', img: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o5', name: 'Earth Tone Drop-Tee', price: 1799, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1564859228273-274232fdb516?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o6', name: 'Minimalist Boxy Shirt', price: 1599, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1618517351616-3898bd307a52?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o7', name: 'Retro Print Oversize', price: 1899, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: 'LIMITED', img: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o8', name: 'Washed Black Boxy', price: 1899, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o9', name: 'Typography Drop-Shoulder', price: 1999, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o10', name: 'Pastel Oversized Top', price: 1799, mainCategory: 'tops', subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80' },
+
+            // STREETWEAR - Other Tops
+            { id: 's_t1', name: 'Classic Pique Polo', price: 2100, mainCategory: 'tops', subCategory: 'tee', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1586363104862-3a5e222ee1eb?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_t2', name: 'Summer Linen Shirt', price: 2599, mainCategory: 'tops', subCategory: 'linen', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_t3', name: 'Checkered Flannel', price: 2899, mainCategory: 'tops', subCategory: 'checkered', section: 'streetwear', badge: 'ARCHIVE', img: 'https://images.unsplash.com/photo-1602810316693-3667c854239a?auto=format&fit=crop&w=600&q=80' },
+            
+            // STREETWEAR - Bottoms
+            { id: 's_b1', name: 'Distressed Street Jeans', price: 3499, mainCategory: 'bottoms', subCategory: 'jeans', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_b2', name: 'Baggy Parachute Cargo', price: 3200, mainCategory: 'bottoms', subCategory: 'cargo', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1517423568366-8b83523034fd?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_b3', name: 'Relaxed Fit Chino', price: 2199, mainCategory: 'bottoms', subCategory: 'chino', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_b4', name: 'Summer Sweat Shorts', price: 1499, mainCategory: 'bottoms', subCategory: 'shorts', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=600&q=80' },
+
+            // PREMIUM (Brands) - Tops
+            { id: 'p_t1', name: 'Balenciaga Oversized Tee', price: 15500, mainCategory: 'tops', subCategory: 'oversize', section: 'premium', badge: 'BALENCIAGA', img: 'https://images.unsplash.com/photo-1527719327859-c6ce80353573?auto=format&fit=crop&w=600&q=80' },
+            { id: 'p_t2', name: 'Ralph Lauren Classic Polo', price: 6200, mainCategory: 'tops', subCategory: 'tee', section: 'premium', badge: 'RALPH LAUREN', img: 'https://images.unsplash.com/photo-1586363104862-3a5e222ee1eb?auto=format&fit=crop&w=600&q=80' },
+            { id: 'p_t3', name: 'Hugo Boss Linen Shirt', price: 8500, mainCategory: 'tops', subCategory: 'linen', section: 'premium', badge: 'HUGO BOSS', img: 'https://images.unsplash.com/photo-1598032895397-b9472444bf93?auto=format&fit=crop&w=600&q=80' },
+            
+            // PREMIUM (Brands) - Bottoms
+            { id: 'p_b1', name: "Levi's 501 Original Jeans", price: 8500, mainCategory: 'bottoms', subCategory: 'jeans', section: 'premium', badge: "LEVI'S", img: 'https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80' },
+            { id: 'p_b2', name: 'Stone Island Cargo', price: 14500, mainCategory: 'bottoms', subCategory: 'cargo', section: 'premium', badge: 'STONE ISLAND', img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80' },
+
+            // YOUTH (Kids)
+            { id: 'y_t1', name: 'Kids Oversize Graphic Tee', price: 1299, mainCategory: 'tops', subCategory: 'oversize', section: 'youth', badge: 'NEW', img: 'https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=600&q=80' },
+            { id: 'y_b1', name: 'Mini Stretch Denim', price: 1899, mainCategory: 'bottoms', subCategory: 'jeans', section: 'youth', badge: 'HOT', img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80' }
+        ];
+
+        const subCatMap = {
+            'tops': [
+                {id: 'all', label: 'ALL'}, {id: 'oversize', label: 'OVERSIZE'}, 
+                {id: 'tee', label: 'TEES/POLOS'}, {id: 'shirt', label: 'SHIRTS'}, 
+                {id: 'linen', label: 'LINEN'}, {id: 'checkered', label: 'CHECKERED'}
+            ],
+            'bottoms': [
+                {id: 'all', label: 'ALL'}, {id: 'jeans', label: 'JEANS'}, 
+                {id: 'cargo', label: 'CARGOS'}, {id: 'chino', label: 'CHINOS'}, 
+                {id: 'trouser', label: 'TROUSERS'}, {id: 'shorts', label: 'SHORTS'}
+            ]
+        };
+
+        let cart = [];
+        let activeSection = 'home';
+        let currentFolder = ''; 
+        let currentSubFilter = 'all';
+
+        // --- INIT, CURSOR, & SCROLL SETUP ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('preloader').style.opacity = '0';
+                document.getElementById('preloader').style.filter = 'blur(10px)';
+                setTimeout(() => document.getElementById('preloader').style.display = 'none', 800);
+            }, 1200);
+            setupHero3D();
+            setupScrollReveals();
+        });
+
+        // Ambient Cursor Glow Tracker
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.getElementById('cursor-glow');
+            glow.style.left = e.clientX + 'px';
+            glow.style.top = e.clientY + 'px';
+        });
+
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+
+        function setupScrollReveals() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                        // Apply tilt specifically to vault cards once revealed
+                        if(entry.target.classList.contains('vault-card')) {
+                            applyTiltToElement(entry.target);
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal-up, .vault-reveal').forEach(el => observer.observe(el));
+        }
+
+        // ENGINEERED HERO MOUSE TRACKING
+        function setupHero3D() {
+            const hero = document.getElementById('heroScene');
+            const scene = document.getElementById('scene3D');
+            hero.addEventListener('mousemove', (e) => {
+                const rect = hero.getBoundingClientRect();
+                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                const rotateX = ((y - (rect.height / 2)) / (rect.height / 2)) * -12;
+                const rotateY = ((x - (rect.width / 2)) / (rect.width / 2)) * 12;
+                scene.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            hero.addEventListener('mouseleave', () => { scene.style.transform = `rotateX(0deg) rotateY(0deg)`; });
+        }
+
+        // --- NEW CINEMATIC SMOOTH PAGE TRANSITIONS ---
+        function triggerSmoothTransition(pageId) {
+            if(activeSection === pageId) return;
+            
+            const mainContent = document.getElementById('main-content');
+            
+            // Fade out and blur current content
+            mainContent.classList.add('page-transitioning');
+            
+            // Wait for fade out, swap content, then fade in
+            setTimeout(() => {
+                showPage(pageId);
+                // Force reflow
+                void mainContent.offsetWidth; 
+                // Fade back in
+                mainContent.classList.remove('page-transitioning');
+            }, 400); // matches the 0.4s CSS transition
+        }
+
+        function warpToArchive() {
+            // Apply warp speed to hero, then trigger standard smooth transition
+            document.getElementById('scene3D').classList.add('warp-speed');
+            setTimeout(() => {
+                triggerSmoothTransition('streetwear');
+                setTimeout(() => { document.getElementById('scene3D').classList.remove('warp-speed'); }, 500);
+            }, 300);
+        }
+
+        function showPage(pageId) {
+            if(activeSection !== 'home' && activeSection !== pageId) {
+                const prodView = document.getElementById(`${activeSection}-products`);
+                if(prodView && prodView.classList.contains('active')) closeFolder(activeSection);
+            }
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-links button').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(pageId) || (pageId==='home' && btn.textContent.includes('ARCHIVE'))) btn.classList.add('active');
+            });
+            activeSection = pageId; 
+            window.scrollTo({ top: 0, behavior: 'auto' }); // instant scroll so fade-in happens at top
+        }
+
+        // --- FOLDER & PREMIUM BURST LOGIC ---
+        function openFolder(section, folderCategory, title) {
+            currentFolder = folderCategory; currentSubFilter = 'all';
+            document.getElementById(`${section}-folders`).classList.add('hidden');
+            document.getElementById(`${section}-folder-title`).innerText = title;
+            buildSubFilters(section, folderCategory);
+            renderProducts(section);
+            
+            setTimeout(() => {
+                document.getElementById(`${section}-products`).classList.add('active');
+                triggerStaggerBurst(section);
+            }, 300);
+        }
+
+        function closeFolder(section) {
+            document.getElementById(`${section}-products`).classList.remove('active');
+            setTimeout(() => { document.getElementById(`${section}-folders`).classList.remove('hidden'); }, 300);
+        }
+
+        function buildSubFilters(section, mainCat) {
+            const container = document.getElementById(`${section}-filters`);
+            container.innerHTML = (subCatMap[mainCat] || []).map(sub => 
+                `<button class="t-filter ${sub.id === 'all' ? 'active' : ''}" 
+                 onclick="applySubFilter('${section}', '${sub.id}', this)">[ ${sub.label} ]</button>`
+            ).join('');
+        }
+
+        function applySubFilter(section, subId, btn) {
+            currentSubFilter = subId;
+            const container = document.getElementById(`${section}-filters`);
+            container.querySelectorAll('.t-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderProducts(section);
+            triggerStaggerBurst(section); // Re-trigger the premium entry animation
+        }
+
+        function triggerStaggerBurst(section) {
+            const grid = document.getElementById(`${section}Grid`);
+            grid.className = 'product-grid stagger-burst'; 
+            void grid.offsetWidth; // Reflow
+        }
+
+        function renderProducts(section) {
+            const container = document.getElementById(`${section}Grid`);
+            const filtered = catalog.filter(p => p.section === section && p.mainCategory === currentFolder && (currentSubFilter === 'all' || p.subType === currentSubFilter));
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-gray); font-family: var(--font-tech); text-align: center; margin-top: 50px;">[ 0 RECORDS FOUND FOR THIS FILTER ]</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map((p, i) => {
+                const badge = p.badge ? `<div class="sys-badge">${p.badge}</div>` : '';
+                return `
+                    <div class="tilt-card" style="animation-delay: ${i * 0.1}s;">
+                        ${badge}
+                        <div class="card-img-wrapper">
+                            <img src="${p.img}" alt="${p.name}" loading="lazy">
+                            <div class="quick-add"><button onclick="addToCart('${p.id}')">EXTRACT TO BAG</button></div>
+                        </div>
+                        <div class="card-info">
+                            <div class="card-meta"><div class="card-category">[ ${p.subType} ]</div><div class="card-price">PKR ${p.price}</div></div>
+                            <div class="card-title" style="margin-top:10px;">${p.name}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            initTilt();
+        }
+
+        // --- UNIVERSAL TILT LOGIC (Applies to Products & Vault Cards) ---
+        function applyTiltToElement(card) {
+            // Remove existing listener to prevent duplicates
+            card.replaceWith(card.cloneNode(true));
+            const newCard = document.getElementById(card.id) || card; // grab reference
+            
+            newCard.addEventListener('mousemove', e => {
+                const rect = newCard.getBoundingClientRect();
+                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                const rotateX = ((y - (rect.height / 2)) / (rect.height / 2)) * -12; 
+                const rotateY = ((x - (rect.width / 2)) / (rect.width / 2)) * 12;
+                newCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                
+                // Optional Glare
+                const glareX = (x / rect.width) * 100; const glareY = (y / rect.height) * 100;
+                newCard.style.setProperty('--glare-x', `${glareX}%`); 
+                newCard.style.setProperty('--glare-y', `${glareY}%`); 
+                newCard.style.setProperty('--glare-opacity', `0.3`);
+            });
+            newCard.addEventListener('mouseleave', () => {
+                newCard.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+                newCard.style.setProperty('--glare-opacity', `0`);
+            });
+        }
+
+        function initTilt() {
+            document.querySelectorAll('.tilt-card').forEach(card => {
+                applyTiltToElement(card);
+            });
+        }
+
+        // --- CART SYSTEM ---
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('open');
+            document.getElementById('cartOverlay').classList.toggle('open');
+        }
+
+        function addToCart(id) {
+            const item = catalog.find(p => p.id === id);
+            cart.push(item);
+            updateCartUI();
+            if(!document.getElementById('cartSidebar').classList.contains('open')) toggleCart();
+        }
+
+        function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
+
+        function updateCartUI() {
+            document.getElementById('cartCount').innerText = cart.length;
+            const container = document.getElementById('cartItems');
+            let total = 0;
+            if (cart.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-gray); font-family:var(--font-tech); font-size:11px;">[ NO ITEMS DETECTED ]</p>`;
+            } else {
+                container.innerHTML = cart.map((item, i) => {
+                    total += item.price;
+                    return `<div class="cart-item"><img src="${item.img}" alt="${item.name}"><div class="cart-item-details"><div class="cart-item-title">${item.name}</div><div class="cart-item-price">PKR ${item.price}</div><button class="remove-item" onclick="removeFromCart(${i})">[ REMOVE ]</button></div></div>`;
+                }).join('');
+            }
+            document.getElementById('cartTotalText').innerText = `PKR ${total}`;
+        }
+
+        function checkoutWhatsApp() {
+            if(cart.length === 0) return alert("System Bag is empty.");
+            let text = "INITIATING ORDER - Usama Outfitters:\n\n";
+            let total = 0;
+            cart.forEach((item, i) => { text += `[${i+1}] ${item.name} - PKR ${item.price}\n`; total += item.price; });
+            text += `\n*TOTAL: PKR ${total}*\nRequesting availability check.`;
+            window.open(`https://wa.me/923001234567?text=${encodeURIComponent(text)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
