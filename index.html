@@ -3,331 +3,411 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usama Outfitters | Engineered Streetwear</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <title>USAMA | Futuristic Luxury Streetwear</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Inter:wght@300;400;500;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ===== CSS VARIABLES & RESET ===== */
+        /* ===== CORE VARIABLES ===== */
         :root {
-            --black: #050505; --white: #ffffff; --gold: #c5a059;
-            --grey: #121212; --neon: #e0ff00; --wa-green: #25D366;
-            --text-gray: #888888;
+            --bg-base: #030303;
+            --bg-surface: #0a0a0a;
+            --bg-elevated: #141414;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent-glow: #e0ff00; /* Futuristic Neon */
+            --accent-premium: #d4af37; /* Luxury Gold */
+            --glass-bg: rgba(10, 10, 10, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            
             --font-display: 'Syne', sans-serif;
             --font-body: 'Inter', sans-serif;
             --font-tech: 'Space Mono', monospace;
-            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            
+            --easing-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+            --easing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { 
-            font-family: var(--font-body); background-color: var(--black); 
-            color: var(--white); overflow-x: hidden; 
-            -webkit-font-smoothing: antialiased; 
-            -webkit-tap-highlight-color: transparent;
+        body {
+            font-family: var(--font-body); background-color: var(--bg-base);
+            color: var(--text-primary); overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
         }
 
-        /* ===== PREMIUM AMBIENT EFFECTS ===== */
-        #cursor-glow {
+        /* ===== AMBIENT VFX & MESH GRADIENT ===== */
+        .ambient-mesh {
+            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(224, 255, 0, 0.03), transparent 60%),
+                radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.02), transparent 50%);
+            z-index: 0; pointer-events: none;
+            animation: meshRotate 30s linear infinite;
+        }
+        @keyframes meshRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .cursor-light {
             position: fixed; top: 0; left: 0; width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(224, 255, 0, 0.05) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(224, 255, 0, 0.06) 0%, transparent 60%);
             transform: translate(-50%, -50%); pointer-events: none; z-index: 1; 
-            mix-blend-mode: screen; transition: width 0.4s, height 0.4s;
+            mix-blend-mode: screen; transition: opacity 0.3s; opacity: 0;
         }
-        @media (max-width: 768px) { #cursor-glow { display: none; } }
+        @media (min-width: 1024px) { body:hover .cursor-light { opacity: 1; } }
 
-        .ambient-particles {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; z-index: 0; opacity: 0.3;
-            background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 80px 80px; animation: particleDrift 40s linear infinite;
+        .floating-particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
+            background-size: 60px 60px; z-index: 0; pointer-events: none;
+            animation: particleFloat 60s linear infinite; opacity: 0.4;
         }
-        @keyframes particleDrift { 0% { background-position: 0 0; } 100% { background-position: 1000px 1000px; } }
+        @keyframes particleFloat { 0% { background-position: 0 0; } 100% { background-position: 1000px 1000px; } }
 
-        /* ===== SMOOTH PAGE TRANSITIONS ===== */
-        main { position: relative; z-index: 10; transition: opacity 0.4s ease, filter 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-        main.page-transitioning { opacity: 0; filter: blur(10px); transform: scale(0.98); }
-
-        /* ===== PRELOADER ===== */
-        #preloader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: var(--black); z-index: 9999; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; transition: opacity 0.8s, filter 0.8s;
+        /* ===== ONE-TIME CINEMATIC INTRO ===== */
+        #cinematic-intro {
+            position: fixed; inset: 0; background: var(--bg-base); z-index: 100000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s var(--easing-smooth), visibility 1s;
         }
-        .sys-boot { font-family: var(--font-tech); font-size: 12px; color: var(--text-gray); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
-        .logo-reveal { font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 3rem); font-weight: 800; letter-spacing: 5px; color: var(--white); overflow: hidden; text-align: center;}
-        .logo-reveal span { display: inline-block; transform: translateY(100%); animation: slideUpReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s; }
-
-        /* ===== SYSTEM TRANSITIONS ===== */
-        #cyber-transition {
-            position: fixed; top: 0; left: -100%; width: 100%; height: 100vh;
-            background: var(--neon); z-index: 99999; mix-blend-mode: difference;
-            transition: left 0.5s cubic-bezier(0.7, 0, 0.3, 1); pointer-events: none;
+        .intro-brand {
+            font-family: var(--font-display); font-size: clamp(2rem, 6vw, 5rem);
+            font-weight: 800; letter-spacing: 0.5em; text-transform: uppercase;
+            color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+            position: relative; overflow: hidden;
         }
-        #cyber-transition.active { left: 0; }
-        #cyber-transition.done { left: 100%; }
+        .intro-brand::before {
+            content: 'USAMA'; position: absolute; left: 0; top: 0; width: 0%; height: 100%;
+            color: var(--white); -webkit-text-stroke: 0px; overflow: hidden;
+            border-right: 2px solid var(--accent-glow);
+            animation: typeReveal 1.5s var(--easing-smooth) 0.5s forwards, pulseGlow 2s infinite;
+        }
+        .intro-subtitle {
+            font-family: var(--font-tech); font-size: 10px; color: var(--text-secondary);
+            margin-top: 20px; letter-spacing: 4px; opacity: 0;
+            animation: fadeUp 1s var(--easing-smooth) 1.5s forwards;
+        }
+        @keyframes typeReveal { to { width: 100%; } }
+        @keyframes pulseGlow { 0%, 100% { text-shadow: 0 0 20px rgba(224,255,0,0); } 50% { text-shadow: 0 0 30px rgba(224,255,0,0.4); } }
 
-        /* ===== ANIMATIONS ===== */
-        @keyframes slideUpReveal { to { transform: translateY(0); } }
-        @keyframes gridPan { 0% { transform: translateY(0); } 100% { transform: translateY(50px); } }
-        .warp-speed { animation: warpDrive 0.6s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
-        @keyframes warpDrive { 0% { transform: scale(1) translateZ(0); filter: blur(0); opacity: 1; } 100% { transform: scale(3) translateZ(500px); filter: blur(15px); opacity: 0; } }
-        @keyframes premiumReveal { 0% { opacity: 0; transform: translateY(30px) scale(0.95); filter: blur(5px); } 100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
-        .stagger-burst .tilt-card { opacity: 0; animation: premiumReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .reveal-up { opacity: 0; transform: translateY(40px); filter: blur(3px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal-up.in-view { opacity: 1; transform: translateY(0); filter: blur(0); }
-
-        /* ===== HEADER & MOBILE MENU ===== */
+        /* ===== HEADER & NAVIGATION ===== */
         header { 
-            position: fixed; top: 0; left: 0; width: 100%; padding: 20px 5%; z-index: 1000; 
+            position: fixed; top: 0; left: 0; width: 100%; padding: 25px 5%; z-index: 1000; 
             display: flex; justify-content: space-between; align-items: center; 
-            transition: var(--transition); background: transparent; 
+            transition: all 0.5s var(--easing-smooth); background: transparent; 
         }
-        header.scrolled { background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(20px); padding: 15px 5%; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        header.scrolled { 
+            background: rgba(3, 3, 3, 0.85); backdrop-filter: blur(20px); 
+            padding: 15px 5%; border-bottom: 1px solid var(--glass-border); 
+        }
+        .brand-logo { font-family: var(--font-display); font-size: clamp(16px, 4vw, 22px); font-weight: 800; color: var(--white); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; z-index: 1002;}
         
-        .brand { font-family: var(--font-display); font-size: clamp(14px, 3.5vw, 20px); font-weight: 800; color: var(--white); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; z-index: 1002; white-space: nowrap;}
-        
-        .nav-links { display: none; gap: 30px; }
+        .nav-links { display: none; gap: 35px; z-index: 1002;}
         @media (min-width: 900px) { .nav-links { display: flex; } }
-        .nav-links button { background: none; border: none; color: var(--text-gray); font-family: var(--font-tech); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; cursor: pointer; }
-        .nav-links button:hover, .nav-links button.active { color: var(--neon); text-shadow: 0 0 10px rgba(224,255,0,0.4); }
+        .nav-links button { 
+            background: none; border: none; color: var(--text-secondary); 
+            font-family: var(--font-tech); font-size: 11px; font-weight: 600; 
+            text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; 
+            cursor: pointer; position: relative; padding: 5px 0;
+        }
+        .nav-links button::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
+            background: var(--accent-glow); transition: width 0.3s ease;
+        }
+        .nav-links button:hover::after, .nav-links button.active::after { width: 100%; }
+        .nav-links button:hover, .nav-links button.active { color: var(--white); }
         
-        .header-actions { display: flex; gap: 15px; align-items: center; z-index: 1002;}
-        .cart-btn { background: none; border: none; color: var(--white); font-family: var(--font-tech); font-size: 11px; display: flex; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer;}
-        .cart-btn:hover { color: var(--neon); }
-        .cart-badge { background: var(--neon); color: var(--black); width: 22px; height: 22px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; }
+        .header-actions { display: flex; gap: 20px; align-items: center; z-index: 1002;}
+        .cart-btn { background: none; border: none; color: var(--white); font-family: var(--font-tech); font-size: 11px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: 0.3s;}
+        .cart-btn:hover { color: var(--accent-glow); }
+        .cart-badge { background: var(--accent-glow); color: var(--bg-base); width: 20px; height: 20px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; }
 
         .mobile-menu-btn { display: none; background: none; border: none; color: var(--white); font-size: 20px; cursor: pointer; z-index: 1002;}
         @media (max-width: 899px) { .mobile-menu-btn { display: block; } }
 
-        .mobile-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(5,5,5,0.98);
-            backdrop-filter: blur(15px); z-index: 1001; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 30px; opacity: 0; visibility: hidden; transition: var(--transition);
+        /* ===== FUTURISTIC HERO SECTION ===== */
+        .hero-container { position: relative; height: 100vh; width: 100%; overflow: hidden; perspective: 2000px; display: flex; align-items: center; justify-content: center; }
+        
+        /* Focal Text "USAMA" */
+        .hero-focal-text {
+            position: absolute; z-index: 5; text-align: center; pointer-events: none;
+            transform-style: preserve-3d; transform: translateZ(100px);
         }
-        .mobile-nav.active { opacity: 1; visibility: visible; }
-        .mobile-nav button { background: none; border: none; color: var(--white); font-family: var(--font-display); font-size: 2rem; text-transform: uppercase; font-weight: 800; cursor: pointer; transform: translateY(20px); opacity: 0; transition: var(--transition); }
-        .mobile-nav.active button { transform: translateY(0); opacity: 1; }
+        .hero-focal-text h1 {
+            font-family: var(--font-display); font-size: clamp(5rem, 15vw, 15rem);
+            font-weight: 800; line-height: 0.8; text-transform: uppercase;
+            color: var(--white); position: relative;
+            text-shadow: 0 0 100px rgba(224, 255, 0, 0.2);
+            animation: textBreathe 4s infinite alternate;
+        }
+        @keyframes textBreathe { 0% { transform: scale(1); text-shadow: 0 0 80px rgba(224, 255, 0, 0.1); } 100% { transform: scale(1.02); text-shadow: 0 0 120px rgba(224, 255, 0, 0.3); } }
 
-        /* ===== ENGINEERED 3D HERO ===== */
-        .hero-wrapper { perspective: 2000px; height: 100vh; overflow: hidden; background: radial-gradient(circle at center, #111 0%, #000 100%); }
-        .hero { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; transition: transform 0.15s ease-out; }
-        .hero-grid { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 60px 60px; transform: rotateX(70deg) translateZ(-200px); animation: gridPan 4s linear infinite; pointer-events: none; }
+        /* Dynamic Glow behind text */
+        .hero-glow {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(224,255,0,0.15) 0%, transparent 60%);
+            filter: blur(60px); z-index: 4; pointer-events: none;
+        }
+
+        /* Floating Parallax Fashion Images */
+        .hero-3d-scene { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.1s ease-out; z-index: 6; pointer-events: none;}
         
-        .hero-title-3d { position: absolute; text-align: center; transform-style: preserve-3d; transform: translateZ(120px); pointer-events: none; width: 100%;}
-        .hero-title-3d h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 8vw, 8rem); font-weight: 800; line-height: 0.9; text-transform: uppercase; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.9); position: relative; }
-        .hero-title-3d h1::before { content: 'USAMA OUTFITTERS'; position: absolute; left: 0; top: 0; width: 100%; color: var(--white); -webkit-text-stroke: 0px; transform: translateZ(-40px); opacity: 0.4; filter: blur(8px); }
+        .hero-img-panel {
+            position: absolute; border-radius: 4px; overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8); border: 1px solid var(--glass-border);
+            transform-style: preserve-3d; background: var(--bg-surface);
+        }
+        .hero-img-panel img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%) contrast(1.1); transition: 0.8s var(--easing-smooth); }
+        .hero-img-panel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }
         
-        .tech-badge { font-family: var(--font-tech); font-size: 10px; color: var(--neon); letter-spacing: 4px; display: inline-block; margin-bottom: 20px; border: 1px solid rgba(224,255,0,0.5); padding: 8px 20px; transform: translateZ(180px); background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
-        
-        .float-panel { position: absolute; border: 1px solid rgba(255,255,255,0.1); background: rgba(10,10,10,0.6); backdrop-filter: blur(15px); padding: 10px; transform-style: preserve-3d; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .float-panel img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(50%) contrast(1.1); transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .float-panel:hover img { filter: grayscale(0%) contrast(1.2); }
-        .p1 { width: clamp(150px, 25vw, 300px); height: clamp(220px, 35vw, 420px); top: 12%; left: 5%; transform: translateZ(80px) rotateY(15deg) rotateX(5deg); }
-        .p2 { width: clamp(180px, 28vw, 340px); height: clamp(250px, 40vw, 460px); bottom: 15%; right: 5%; transform: translateZ(180px) rotateY(-15deg) rotateX(-5deg); }
-        @media (max-width: 768px) { .p1, .p2 { opacity: 0.5; } }
-        
-        .explore-btn { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%) translateZ(220px); background: var(--white); color: var(--black); font-family: var(--font-tech); padding: 16px 45px; font-size: 12px; font-weight: 700; border: none; text-transform: uppercase; transition: all 0.4s; box-shadow: 0 10px 30px rgba(255,255,255,0.15); border-radius: 2px; cursor: pointer; overflow: hidden;}
-        .explore-btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,0,0,0.2), transparent); transform: skewX(-25deg); transition: 0s; z-index: 10; pointer-events: none; }
+        .panel-1 { width: clamp(160px, 20vw, 300px); height: clamp(240px, 30vw, 420px); top: 15%; left: 10%; transform: translateZ(200px) rotateY(15deg) rotateX(10deg); }
+        .panel-2 { width: clamp(180px, 25vw, 350px); height: clamp(260px, 35vw, 480px); bottom: 10%; right: 10%; transform: translateZ(300px) rotateY(-20deg) rotateX(-5deg); }
+        .panel-3 { width: clamp(120px, 15vw, 220px); height: clamp(180px, 22vw, 320px); top: 20%; right: 25%; transform: translateZ(100px) rotateY(-10deg); opacity: 0.6; filter: blur(3px);}
+        @media (max-width: 768px) { .panel-1 { top: 25%; left: 5%; } .panel-2 { bottom: 20%; right: 5%; transform: translateZ(150px); } .panel-3 { display: none; } }
+
+        .hero-cta {
+            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%) translateZ(400px);
+            z-index: 20; display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+        .explore-btn {
+            background: var(--white); color: var(--bg-base); font-family: var(--font-tech);
+            padding: 18px 50px; font-size: 12px; font-weight: 800; border: none; border-radius: 2px;
+            text-transform: uppercase; cursor: pointer; position: relative; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1); transition: var(--transition);
+        }
+        /* Premium Shine Sweep on Button */
+        .explore-btn::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.15), transparent);
+            transform: skewX(-25deg); transition: 0s; pointer-events: none;
+        }
         .explore-btn:hover::after { left: 200%; transition: 0.7s ease-in-out; }
-        .explore-btn:hover { background: var(--neon); box-shadow: 0 15px 40px rgba(224, 255, 0, 0.5); transform: translateX(-50%) translateZ(240px) scale(1.05); }
+        .explore-btn:hover { background: var(--accent-glow); box-shadow: 0 15px 40px rgba(224, 255, 0, 0.4); transform: scale(1.05); }
 
-        /* ===== SCROLL 3D OFFERS VAULT ===== */
-        .offers-vault { padding: 120px 5%; max-width: 1600px; margin: 0 auto; perspective: 1500px; }
-        .vault-header { text-align: center; font-family: var(--font-tech); color: var(--neon); font-size: 13px; letter-spacing: 4px; margin-bottom: 70px; opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
-        .vault-header.in-view { opacity: 1; transform: translateY(0); }
-        .vault-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; transform-style: preserve-3d; }
+        /* ===== SCROLL ANIMATIONS & MASKS ===== */
+        .mask-reveal { clip-path: inset(100% 0 0 0); transition: clip-path 1.2s var(--easing-smooth); }
+        .mask-reveal.in-view { clip-path: inset(0 0 0 0); }
         
-        .vault-card { 
-            position: relative; background: rgba(20,20,20,0.6); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.05); padding: 30px; text-align: center; 
-            transform-style: preserve-3d; cursor: pointer; transition: transform 0.15s ease-out, border-color 0.4s;
-            opacity: 0; transform: perspective(1000px) rotateX(-20deg) translateY(60px);
+        .fade-up { opacity: 0; transform: translateY(50px); transition: all 0.8s var(--easing-smooth); }
+        .fade-up.in-view { opacity: 1; transform: translateY(0); }
+
+        /* ===== SECTIONS & LAYOUT ===== */
+        .page-section { display: none; padding-top: 120px; min-height: 100vh; position: relative; z-index: 10;}
+        .page-section.active { display: block; animation: fadeUp 0.6s var(--easing-smooth); }
+        #home.active { padding-top: 0; animation: none;}
+
+        .section-header { padding: 40px 5%; text-align: center; margin-bottom: 30px; position: relative; }
+        .section-header h2 { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 4.5rem); text-transform: uppercase; letter-spacing: -1px; }
+        .sys-tag { font-family: var(--font-tech); font-size: 10px; color: var(--accent-glow); position: absolute; top: 20px; left: 5%; letter-spacing: 2px;}
+        @media (max-width: 768px) { .sys-tag { position: static; margin-bottom: 15px; display: block;} }
+
+        /* ===== HORIZONTAL FILTERS ===== */
+        .filter-container {
+            display: flex; gap: 10px; padding: 0 5% 30px; overflow-x: auto;
+            scrollbar-width: none; -webkit-overflow-scrolling: touch;
         }
-        .vault-card.in-view { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0); transition: opacity 0.8s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .vault-card::after { content: ''; position: absolute; inset: -1px; z-index: -1; background: linear-gradient(45deg, transparent, var(--neon), transparent); opacity: 0; transition: opacity 0.5s; filter: blur(5px); }
-        .vault-card:hover::after { opacity: 0.5; }
-        .vault-card:hover { border-color: rgba(255,255,255,0.2); }
-
-        .vault-card img { width: 100%; height: 300px; object-fit: cover; margin-bottom: 25px; filter: contrast(1.1) grayscale(20%); transition: 0.5s; transform: translateZ(40px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
-        .vault-card:hover img { filter: contrast(1.1) grayscale(0%); transform: translateZ(60px) scale(1.05); }
-        .vault-card h3 { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; margin-bottom: 12px; transform: translateZ(30px); transition: color 0.3s;}
-        .vault-card:hover h3 { color: var(--neon); }
-        .vault-card p { font-family: var(--font-tech); font-size: 12px; color: var(--text-gray); margin-bottom: 25px; transform: translateZ(20px);}
-        .vault-card button { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--white); padding: 12px 35px; font-family: var(--font-tech); font-size: 11px; transform: translateZ(30px); transition: 0.4s; cursor: pointer;}
-        .vault-card:hover button { background: var(--white); color: var(--black); }
-
-        /* ===== PAGES / FOLDERS / PRODUCTS ===== */
-        .page-section { display: none; padding-top: 100px; min-height: 100vh;}
-        .page-section.active { display: block; }
-        #home.active { padding-top: 0; }
-
-        .section-header-tech { padding: 60px 5%; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 50px; position: relative; }
-        .section-header-tech h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 4.5rem); text-transform: uppercase; }
-        .sys-info { font-family: var(--font-tech); font-size: 11px; color: var(--text-gray); position: absolute; top: 30px; left: 5%; }
-        @media (max-width: 768px) { .sys-info { position: static; margin-bottom: 10px;} }
-
-        /* Mobile safe filters */
-        .tech-filters { display: flex; gap: 10px; margin-bottom: 40px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-        .tech-filters::-webkit-scrollbar { display: none; }
-        .t-filter { background: rgba(255,255,255,0.03); border: 1px solid transparent; color: var(--text-gray); font-family: var(--font-tech); font-size: 10px; padding: 8px 18px; cursor: pointer; transition: all 0.4s; text-transform: uppercase; border-radius: 2px; white-space: nowrap;}
-        .t-filter.active, .t-filter:hover { border-color: var(--neon); color: var(--white); background: rgba(224,255,0,0.05); box-shadow: 0 0 15px rgba(224, 255, 0, 0.15); transform: translateY(-2px);}
-
-        /* ===== ADVANCED 3D CARDS (Mobile Safe) ===== */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 0 5% 100px; perspective: 1200px;}
-        @media (min-width: 768px) { .product-grid { gap: 40px; } }
+        .filter-container::-webkit-scrollbar { display: none; }
         
-        .tilt-card { 
-            position: relative; background: var(--black); transform-style: preserve-3d; cursor: pointer; 
-            border: 1px solid rgba(255,255,255,0.05); overflow: hidden; border-radius: 4px;
-            transition: border-color 0.4s, transform 0.15s ease-out;
+        .filter-btn {
+            background: var(--bg-elevated); border: 1px solid var(--glass-border);
+            color: var(--text-secondary); font-family: var(--font-tech); font-size: 10px;
+            padding: 10px 20px; cursor: pointer; text-transform: uppercase; white-space: nowrap;
+            border-radius: 4px; transition: var(--transition); letter-spacing: 1px;
         }
-        .tilt-card:hover { border-color: rgba(255,255,255,0.15); }
-        
-        .card-img-wrapper { width: 100%; height: 350px; overflow: hidden; position: relative; transform: translateZ(20px); background: #111;}
-        @media (max-width: 768px) { .card-img-wrapper { height: 280px; } }
-        .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s; }
-        @media(hover: hover) { .tilt-card:hover .card-img-wrapper img { transform: scale(1.08); filter: contrast(1.1); } }
-        
-        .sys-badge { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.8); border: 1px solid var(--neon); color: var(--neon); padding: 4px 10px; font-family: var(--font-tech); font-size: 9px; text-transform: uppercase; z-index: 6; transform: translateZ(40px); backdrop-filter: blur(5px); }
-        
-        .card-info { padding: 15px; border-top: 1px solid rgba(255,255,255,0.03); transform: translateZ(10px); background: var(--black);}
-        .card-title { font-family: var(--font-display); font-size: 13px; text-transform: uppercase; margin-bottom: 5px; color: var(--white); letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-        .card-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;}
-        .card-category { font-family: var(--font-tech); font-size: 9px; color: var(--text-gray); text-transform: uppercase; }
-        .card-price { font-family: var(--font-tech); font-size: 11px; color: var(--neon); font-weight: 700; }
+        .filter-btn.active, .filter-btn:hover {
+            background: rgba(224, 255, 0, 0.05); color: var(--white); border-color: var(--accent-glow);
+            box-shadow: 0 0 15px rgba(224, 255, 0, 0.1); transform: translateY(-2px);
+        }
 
-        /* ===== THE MAGICAL PRODUCT MODAL ===== */
-        .product-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: rgba(5,5,5,0.98); backdrop-filter: blur(25px);
+        /* ===== PREMIUM PRODUCT CARDS ===== */
+        .product-grid { 
+            display: grid; padding: 0 5% 100px; gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+        }
+        @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px;} }
+
+        .prod-card {
+            position: relative; background: var(--bg-surface); border: 1px solid var(--glass-border);
+            border-radius: 4px; overflow: hidden; cursor: pointer;
+            transition: transform 0.4s var(--easing-smooth), border-color 0.4s;
+        }
+        .prod-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        
+        /* Animated Hover Border Glow */
+        .prod-card::after {
+            content: ''; position: absolute; inset: -1px; z-index: -1;
+            background: linear-gradient(45deg, transparent, var(--accent-glow), transparent);
+            opacity: 0; transition: opacity 0.5s; filter: blur(10px);
+        }
+        .prod-card:hover::after { opacity: 0.3; }
+
+        .card-img-box { width: 100%; aspect-ratio: 3/4; overflow: hidden; position: relative; background: var(--bg-elevated); }
+        .card-img-box img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.8s var(--easing-smooth), filter 0.8s; }
+        .prod-card:hover .card-img-box img { transform: scale(1.08); filter: contrast(1.1); }
+        
+        .p-badge {
+            position: absolute; top: 15px; left: 15px; background: var(--glass-bg); backdrop-filter: blur(5px);
+            border: 1px solid var(--accent-glow); color: var(--accent-glow); padding: 4px 10px;
+            font-family: var(--font-tech); font-size: 9px; text-transform: uppercase; z-index: 2;
+        }
+
+        .quick-view-btn {
+            position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 30px 15px 15px; transform: translateY(100%); transition: transform 0.4s var(--easing-smooth);
+            display: flex; justify-content: center; z-index: 2;
+        }
+        @media(hover: hover) { .prod-card:hover .quick-view-btn { transform: translateY(0); } }
+        @media(hover: none) { .quick-view-btn { transform: translateY(0); padding: 15px; background: transparent; position: relative;} .card-img-box{aspect-ratio: 4/5;} }
+        
+        .quick-view-btn button {
+            width: 100%; background: var(--white); color: var(--black); border: none; border-radius: 2px;
+            padding: 12px; font-family: var(--font-tech); font-size: 11px; font-weight: 700; text-transform: uppercase; 
+            cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .quick-view-btn button:hover { background: var(--accent-glow); }
+
+        .card-info { padding: 20px 15px; border-top: 1px solid var(--glass-border); background: var(--bg-surface);}
+        .card-title { font-family: var(--font-display); font-size: 14px; text-transform: uppercase; margin-bottom: 8px; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+        .card-meta { display: flex; justify-content: space-between; align-items: center; }
+        .card-cat { font-family: var(--font-tech); font-size: 10px; color: var(--text-secondary); text-transform: uppercase; }
+        .card-price { font-family: var(--font-tech); font-size: 12px; color: var(--accent-glow); font-weight: 700; }
+
+        /* ===== HOLOGRAPHIC PRODUCT MODAL ===== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(3,3,3,0.95); backdrop-filter: blur(20px);
             z-index: 9999; display: flex; align-items: center; justify-content: center;
             opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0.5s;
         }
-        .product-modal.active { opacity: 1; visibility: visible; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
 
-        /* Holographic Scan Line */
-        .holo-scan {
-            position: absolute; top: -10%; left: 0; width: 100%; height: 4px;
-            background: var(--neon); box-shadow: 0 0 20px var(--neon), 0 0 40px var(--neon);
+        .holo-scanner {
+            position: absolute; top: -10%; left: 0; width: 100%; height: 2px;
+            background: var(--accent-glow); box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow);
             z-index: 10000; opacity: 0; pointer-events: none;
         }
-        .product-modal.active .holo-scan { animation: scanLine 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .modal-overlay.active .holo-scanner { animation: scanLine 1.5s var(--easing-smooth) forwards; }
         @keyframes scanLine { 0% { top: -10%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 110%; opacity: 0; } }
 
         .modal-content {
-            width: 95%; max-width: 1200px; height: 85vh; background: var(--black);
-            border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: row;
-            overflow: hidden; position: relative; opacity: 0; transform: scale(0.95);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s; border-radius: 8px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            width: 95%; max-width: 1200px; height: 85vh; background: var(--bg-surface);
+            border: 1px solid var(--glass-border); border-radius: 4px; display: flex; flex-direction: row;
+            overflow: hidden; opacity: 0; transform: scale(0.95) translateY(20px);
+            transition: all 0.6s var(--easing-smooth) 0.2s; box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+            position: relative;
         }
-        @media (max-width: 900px) { .modal-content { flex-direction: column; height: 90vh; overflow-y: auto; } }
-        .product-modal.active .modal-content { opacity: 1; transform: scale(1); }
+        @media (max-width: 900px) { .modal-content { flex-direction: column; height: 92vh; overflow-y: auto; } }
+        .modal-overlay.active .modal-content { opacity: 1; transform: scale(1) translateY(0); }
 
         .close-modal {
-            position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: var(--white);
-            width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            position: absolute; top: 20px; right: 20px; background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--white); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
             font-size: 20px; cursor: pointer; z-index: 10; transition: 0.3s;
         }
-        .close-modal:hover { background: var(--neon); color: var(--black); transform: rotate(90deg); }
+        .close-modal:hover { background: var(--white); color: var(--black); transform: rotate(90deg); }
 
         /* 3 Image Layout */
-        .modal-gallery {
-            flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
-            gap: 5px; background: #111; padding: 5px;
-        }
-        @media (max-width: 900px) { .modal-gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; flex: none; height: 50vh;} }
+        .modal-gallery { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #000; }
+        @media (max-width: 900px) { .modal-gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; flex: none; height: 50vh; scrollbar-width: none;} }
         
-        .modal-img { width: 100%; height: 100%; object-fit: cover; position: relative; }
+        .modal-img { width: 100%; height: 100%; object-fit: cover; background: var(--bg-elevated);}
         @media (max-width: 900px) { .modal-img { flex: 0 0 100%; scroll-snap-align: start; } }
-        
-        .modal-img:nth-child(1) { grid-column: 1 / 2; grid-row: 1 / 3; } /* Main Full Image */
-        .modal-img:nth-child(2) { object-position: 50% 20%; transform: scale(1.2); } /* Fabric Zoom Simulation */
-        .modal-img:nth-child(3) { filter: grayscale(50%) contrast(1.2); } /* Lookbook Simulation */
+        .modal-img:nth-child(1) { grid-column: 1 / 2; grid-row: 1 / 3; } /* Main */
+        .modal-img:nth-child(2) { object-position: 50% 20%; transform: scale(1.3); transform-origin: top; } /* Zoom Detail */
+        .modal-img:nth-child(3) { filter: grayscale(100%) contrast(1.2); } /* Editorial Black & White */
 
-        .modal-info {
-            width: 400px; padding: 50px 40px; display: flex; flex-direction: column; justify-content: center;
-            background: var(--grey);
+        .modal-details {
+            width: 450px; padding: 40px; display: flex; flex-direction: column; 
+            background: var(--bg-base); overflow-y: auto;
         }
-        @media (max-width: 900px) { .modal-info { width: 100%; padding: 30px 20px; flex: 1; } }
+        @media (max-width: 900px) { .modal-details { width: 100%; padding: 25px; flex: none; } }
 
-        .m-badge { font-family: var(--font-tech); font-size: 10px; color: var(--neon); letter-spacing: 2px; margin-bottom: 15px; display: block; }
-        .m-title { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.5rem); text-transform: uppercase; margin-bottom: 10px; line-height: 1.1; }
-        .m-price { font-family: var(--font-tech); font-size: 18px; color: var(--white); margin-bottom: 30px; font-weight: 700;}
+        .md-brand { font-family: var(--font-tech); font-size: 10px; color: var(--accent-glow); letter-spacing: 2px; margin-bottom: 10px; }
+        .md-title { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.5rem); text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }
+        .md-price { font-family: var(--font-tech); font-size: 18px; color: var(--white); margin-bottom: 30px; font-weight: 700;}
         
-        .m-desc-title { font-family: var(--font-tech); font-size: 10px; color: var(--text-gray); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
-        .m-desc { font-size: 13px; color: #ccc; margin-bottom: 40px; line-height: 1.8; }
+        /* Premium Specs Grid */
+        .specs-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); padding: 20px 0;}
+        .spec-item { display: flex; justify-content: space-between; font-size: 12px; font-family: var(--font-tech); text-transform: uppercase;}
+        .spec-label { color: var(--text-secondary); }
+        .spec-value { color: var(--white); font-weight: 700; text-align: right;}
+        
+        .md-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px;}
+        .quality-badge { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 5px 10px; font-size: 9px; font-family: var(--font-tech); text-transform: uppercase; border-radius: 2px; color: #ccc;}
 
-        /* The Magnetic Button */
-        .magnetic-wrap { display: inline-block; padding: 20px; margin: -20px; /* Expands hover area */ }
+        /* Magnetic Button */
+        .magnetic-wrap { display: inline-block; padding: 20px; margin: -20px; margin-top: auto;}
         .magnetic-btn {
             background: var(--white); color: var(--black); font-family: var(--font-tech); font-size: 12px;
-            font-weight: 700; text-transform: uppercase; padding: 18px 30px; border: none; width: 100%;
-            cursor: pointer; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
-            position: relative; overflow: hidden; border-radius: 2px;
+            font-weight: 700; text-transform: uppercase; padding: 20px; border: none; width: 100%;
+            cursor: pointer; transition: transform 0.2s ease-out, background 0.3s;
+            position: relative; overflow: hidden; border-radius: 2px; box-shadow: 0 10px 20px rgba(255,255,255,0.1);
         }
-        .magnetic-btn:hover { background: var(--neon); }
+        .magnetic-btn:hover { background: var(--accent-glow); box-shadow: 0 15px 30px rgba(224,255,0,0.3); }
 
-        /* ===== WA & CART ===== */
+        /* ===== CART SIDEBAR & WHATSAPP ===== */
         .wa-float { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background-color: var(--wa-green); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); z-index: 9000; text-decoration: none; transition: var(--transition); border: 2px solid rgba(255,255,255,0.1); }
         .wa-float:hover { transform: scale(1.1) rotate(10deg); background-color: #1EBE5D; box-shadow: 0 15px 40px rgba(37, 211, 102, 0.6); }
         
-        .cart-sidebar { position: fixed; top: 0; right: -500px; width: 100%; max-width: 400px; height: 100vh; background: rgba(5,5,5,0.98); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05); z-index: 2001; transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; padding: 30px; }
+        .cart-sidebar { position: fixed; top: 0; right: -500px; width: 100%; max-width: 450px; height: 100vh; background: rgba(5,5,5,0.98); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); z-index: 2001; transition: right 0.6s var(--easing-smooth); display: flex; flex-direction: column; padding: 30px; }
         .cart-sidebar.open { right: 0; }
-        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition); backdrop-filter: blur(8px); }
+        .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition); backdrop-filter: blur(8px); }
         .cart-overlay.open { opacity: 1; visibility: visible; }
         
-        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);}
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border);}
         .cart-header h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 20px;}
         .close-cart { background: none; border: none; color: var(--white); font-size: 28px; transition: 0.4s; cursor: pointer;}
-        .close-cart:hover { color: var(--neon); transform: rotate(90deg); }
+        .close-cart:hover { color: var(--accent-glow); transform: rotate(90deg); }
         
-        .cart-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px; }
-        .cart-items::-webkit-scrollbar { width: 3px; }
-        .cart-items::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px;}
+        .cart-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px; scrollbar-width: thin; scrollbar-color: var(--glass-border) transparent;}
         
-        .cart-item { display: flex; gap: 15px; align-items: center; border: 1px solid rgba(255,255,255,0.03); padding: 10px; background: rgba(255,255,255,0.01); border-radius: 4px; transition: 0.3s;}
+        .cart-item { display: flex; gap: 15px; align-items: center; border: 1px solid var(--glass-border); padding: 10px; background: rgba(255,255,255,0.01); border-radius: 4px; transition: 0.3s;}
         .cart-item img { width: 65px; height: 85px; object-fit: cover; border-radius: 2px;}
         .cart-item-details { flex: 1; }
         .cart-item-title { font-family: var(--font-display); font-size: 11px; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; }
-        .cart-item-price { color: var(--neon); font-family: var(--font-tech); font-size: 12px; }
+        .cart-item-price { color: var(--accent-glow); font-family: var(--font-tech); font-size: 12px; }
         .remove-item { background: none; border: none; color: #ff4444; font-family: var(--font-tech); font-size: 9px; text-transform: uppercase; margin-top: 10px; transition: 0.3s; cursor: pointer;}
         
-        .cart-footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .cart-footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--glass-border); }
         .cart-total { display: flex; justify-content: space-between; font-family: var(--font-tech); font-size: 14px; margin-bottom: 20px; }
-        .checkout-btn { width: 100%; padding: 15px; background: var(--white); color: var(--black); font-family: var(--font-tech); border: none; font-weight: 700; text-transform: uppercase; transition: 0.4s; cursor: pointer;}
-        .checkout-btn:hover { background: var(--neon); box-shadow: 0 10px 30px rgba(224, 255, 0, 0.3);}
+        .checkout-btn { width: 100%; padding: 18px; background: var(--white); color: var(--black); font-family: var(--font-tech); border: none; font-weight: 700; text-transform: uppercase; transition: 0.4s; cursor: pointer;}
+        .checkout-btn:hover { background: var(--accent-glow); box-shadow: 0 10px 30px rgba(224, 255, 0, 0.3);}
         
-        footer { padding: 40px 5%; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: var(--text-gray); font-family: var(--font-tech); font-size: 10px; text-transform: uppercase; letter-spacing: 2px;}
+        footer { padding: 40px 5%; border-top: 1px solid var(--glass-border); text-align: center; color: var(--text-secondary); font-family: var(--font-tech); font-size: 10px; text-transform: uppercase; letter-spacing: 2px;}
     </style>
 </head>
 <body>
 
+    <div class="ambient-mesh"></div>
+    <div class="floating-particles"></div>
     <div id="cursor-glow"></div>
-    <div class="ambient-particles"></div>
 
-    <div id="preloader">
-        <div class="sys-boot">Initializing Core Engines...</div>
+    <div id="cinematic-intro">
+        <div class="intro-brand">USAMA</div>
+        <div class="intro-subtitle">ENGINEERED STREETWEAR</div>
+    </div>
+
+    <div id="preloader" style="display: none;">
+        <div class="sys-boot">Re-routing System...</div>
         <h1 class="logo-reveal"><span>USAMA</span></h1>
     </div>
 
     <div id="cyber-transition"></div>
 
-    <div class="product-modal" id="productModal">
-        <div class="holo-scan"></div>
+    <div class="modal-overlay" id="productModal">
+        <div class="holo-scanner"></div>
         <div class="modal-content" id="modalContent">
             <button class="close-modal" onclick="closeModal()">×</button>
             <div class="modal-gallery" id="modalGallery">
                 </div>
-            <div class="modal-info">
-                <span class="m-badge" id="modalBadge">[ NEW DROP ]</span>
-                <h2 class="m-title" id="modalTitle">Acid Wash Tee</h2>
-                <div class="m-price" id="modalPrice">PKR 1899</div>
+            <div class="modal-details">
+                <span class="md-brand" id="modalBadge">[ NEW DROP ]</span>
+                <h2 class="md-title" id="modalTitle">Acid Wash Tee</h2>
+                <div class="md-price" id="modalPrice">PKR 1899</div>
                 
-                <div class="m-desc-title">Engineered Quality</div>
-                <p class="m-desc" id="modalDesc">Constructed with 100% heavyweight 240gsm French Terry Cotton for an ultra-premium drape. Garment-dyed and enzyme washed for a vintage feel that ages perfectly over time.</p>
+                <div class="specs-grid" id="modalSpecs">
+                    </div>
+
+                <div class="md-badges" id="modalQualityBadges">
+                    </div>
                 
                 <div class="magnetic-wrap" id="magneticWrap">
                     <button class="magnetic-btn" id="modalAddToCart">ADD TO SYSTEM BAG</button>
@@ -336,13 +416,12 @@
         </div>
     </div>
 
-    <a href="https://wa.me/923001234567?text=Hello%20Usama%20Outfitters!" class="wa-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+    <a href="https://wa.me/923001234567?text=Hello%20Usama%20Outfitters!%20I'm%20exploring%20the%20collection." class="wa-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
 
     <header id="header">
-        <a class="brand" onclick="triggerSmoothTransition('home')">USAMA OUTFITTERS</a>
+        <a class="brand-logo" onclick="triggerSmoothTransition('home')">USAMA OUTFITTERS</a>
         <nav class="nav-links">
-            <button onclick="triggerSmoothTransition('home')" class="active">ARCHIVE</button>
-            <button onclick="triggerSmoothTransition('streetwear')">STREETWEAR</button>
+            <button onclick="triggerSmoothTransition('streetwear')" class="active">STREETWEAR</button>
             <button onclick="triggerSmoothTransition('premium')">PREMIUM</button>
             <button onclick="triggerSmoothTransition('youth')">YOUTH</button>
         </nav>
@@ -353,7 +432,7 @@
     </header>
 
     <nav class="mobile-nav" id="mobileNav">
-        <button onclick="mobileNavTransition('home')">ARCHIVE</button>
+        <button onclick="mobileNavTransition('home')">HOME</button>
         <button onclick="mobileNavTransition('streetwear')">STREETWEAR</button>
         <button onclick="mobileNavTransition('premium')">PREMIUM</button>
         <button onclick="mobileNavTransition('youth')">YOUTH</button>
@@ -362,7 +441,7 @@
     <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header"><h2>SYSTEM_BAG</h2><button class="close-cart" onclick="toggleCart()">×</button></div>
-        <div class="cart-items" id="cartItems"><p style="color:var(--text-gray); font-family:var(--font-tech); font-size:11px;">[ NO ITEMS DETECTED ]</p></div>
+        <div class="cart-items" id="cartItems"></div>
         <div class="cart-footer">
             <div class="cart-total"><span>TOTAL:</span><span id="cartTotalText">PKR 0</span></div>
             <button class="checkout-btn" onclick="checkoutWhatsApp()">SECURE CHECKOUT</button>
@@ -370,72 +449,59 @@
     </div>
 
     <main id="main-content">
+        
         <section id="home" class="page-section active">
-            <div class="hero-wrapper">
-                <div class="hero" id="heroScene">
-                    <div class="hero-grid"></div>
-                    <div id="scene3D" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; transition: transform 0.1s ease-out;">
-                        <div class="tech-badge">[ SYS.VER 3.0 / KARACHI ]</div>
-                        <div class="float-panel p1"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Model"></div>
-                        <div class="float-panel p2"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80" alt="Model"></div>
-                        <div class="hero-title-3d"><h1>USAMA</h1></div>
-                        <button class="explore-btn" onclick="warpToArchive()">ACCESS ARCHIVE // </button>
-                    </div>
+            <div class="hero-container">
+                <div class="hero-focal-text"><h1>USAMA</h1></div>
+                <div class="hero-glow"></div>
+                
+                <div class="hero-3d-scene" id="heroScene">
+                    <div class="hero-img-panel panel-1"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Premium Fit"></div>
+                    <div class="hero-img-panel panel-2"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80" alt="Streetwear Fit"></div>
+                    <div class="hero-img-panel panel-3"><img src="https://images.unsplash.com/photo-1485230405346-71acb9518d9c?auto=format&fit=crop&w=600&q=80" alt="Youth Fit"></div>
                 </div>
-            </div>
 
-            <div class="offers-vault">
-                <div class="vault-header reveal-up">[ INTERCEPTING FEATURED DROPS ]</div>
-                <div class="vault-grid">
-                    <div class="vault-card vault-reveal tilt-card" style="transition-delay: 0s;" onclick="triggerSmoothTransition('streetwear')">
-                        <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80" alt="Offer">
-                        <h3>Acid Wash Series</h3>
-                        <p>Oversized fits re-engineered for the street.</p>
-                        <button>EXPLORE</button>
-                    </div>
-                    <div class="vault-card vault-reveal tilt-card" style="transition-delay: 0.1s;" onclick="triggerSmoothTransition('premium')">
-                        <img src="https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80" alt="Offer">
-                        <h3>Premium Denim</h3>
-                        <p>Authentic Levi's & High-end archives.</p>
-                        <button>ACCESS</button>
-                    </div>
-                    <div class="vault-card vault-reveal tilt-card" style="transition-delay: 0.2s;" onclick="triggerSmoothTransition('youth')">
-                        <img src="https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=600&q=80" alt="Offer">
-                        <h3>Youth Protocol</h3>
-                        <p>Street aesthetics scaled for the next generation.</p>
-                        <button>VIEW</button>
-                    </div>
+                <div class="hero-cta">
+                    <span style="font-family: var(--font-tech); font-size: 10px; color: var(--accent-glow); letter-spacing: 4px; text-shadow: 0 0 10px rgba(224,255,0,0.5);">[ THE NEW STANDARD ]</span>
+                    <button class="explore-btn" onclick="triggerSmoothTransition('streetwear')">EXPLORE ARCHIVE</button>
                 </div>
             </div>
         </section>
 
         <section id="streetwear" class="page-section">
-            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/STREETWEAR</div><h1>Streetwear</h1></div>
-            <div class="tech-filters" id="streetwear-filters">
-                <button class="t-filter active" onclick="applySubFilter('streetwear', 'all', this)">[ ALL STREETWEAR ]</button>
-                <button class="t-filter" onclick="applySubFilter('streetwear', 'oversize', this)">[ OVERSIZE TEES ]</button>
-                <button class="t-filter" onclick="applySubFilter('streetwear', 'jeans', this)">[ JEANS ]</button>
-                <button class="t-filter" onclick="applySubFilter('streetwear', 'cargo', this)">[ CARGOS ]</button>
+            <div class="section-header fade-up"><div class="sys-tag">DIR: /STREETWEAR</div><h2>Streetwear</h2></div>
+            <div class="filter-container fade-up" id="streetwear-filters">
+                <button class="filter-btn active" onclick="applyFilter('streetwear', 'all', this)">All</button>
+                <button class="filter-btn" onclick="applyFilter('streetwear', 'oversized', this)">Oversized T-Shirts</button>
+                <button class="filter-btn" onclick="applyFilter('streetwear', 'graphic', this)">Graphic Tees</button>
+                <button class="filter-btn" onclick="applyFilter('streetwear', 'polo', this)">Premium Polos</button>
+                <button class="filter-btn" onclick="applyFilter('streetwear', 'cargo', this)">Cargo Pants</button>
+                <button class="filter-btn" onclick="applyFilter('streetwear', 'baggy', this)">Baggy Jeans</button>
+                <button class="filter-btn" onclick="applyFilter('streetwear', 'coord', this)">Co-Ord Sets</button>
             </div>
             <div class="product-grid" id="streetwearGrid"></div>
         </section>
 
         <section id="premium" class="page-section">
-            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/PREMIUM</div><h1>Premium</h1></div>
-            <div class="tech-filters" id="premium-filters">
-                <button class="t-filter active" onclick="applySubFilter('premium', 'all', this)">[ ALL PREMIUM ]</button>
-                <button class="t-filter" onclick="applySubFilter('premium', 'polo', this)">[ BRANDS ]</button>
-                <button class="t-filter" onclick="applySubFilter('premium', 'jeans', this)">[ LEVI'S ]</button>
+            <div class="section-header fade-up"><div class="sys-tag">DIR: /PREMIUM_BRANDS</div><h2>Premium</h2></div>
+            <div class="filter-container fade-up" id="premium-filters">
+                <button class="filter-btn active" onclick="applyFilter('premium', 'all', this)">All</button>
+                <button class="filter-btn" onclick="applyFilter('premium', 'rl_polo', this)">Ralph Lauren Polos</button>
+                <button class="filter-btn" onclick="applyFilter('premium', 'luxury_shirt', this)">Luxury Shirts</button>
+                <button class="filter-btn" onclick="applyFilter('premium', 'high_denim', this)">High-End Denim</button>
+                <button class="filter-btn" onclick="applyFilter('premium', 'exec', this)">Executive Wear</button>
             </div>
             <div class="product-grid" id="premiumGrid"></div>
         </section>
 
         <section id="youth" class="page-section">
-            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/YOUTH</div><h1>Youth</h1></div>
-            <div class="tech-filters" id="youth-filters">
-                <button class="t-filter active" onclick="applySubFilter('youth', 'all', this)">[ ALL YOUTH ]</button>
-                <button class="t-filter" onclick="applySubFilter('youth', 'tee', this)">[ TEES ]</button>
-                <button class="t-filter" onclick="applySubFilter('youth', 'jeans', this)">[ DENIM ]</button>
+            <div class="section-header fade-up"><div class="sys-tag">DIR: /YOUTH</div><h2>Youth</h2></div>
+            <div class="filter-container fade-up" id="youth-filters">
+                <button class="filter-btn active" onclick="applyFilter('youth', 'all', this)">All</button>
+                <button class="filter-btn" onclick="applyFilter('youth', 'graphic', this)">Graphic Tees</button>
+                <button class="filter-btn" onclick="applyFilter('youth', 'hoodie', this)">Young Hoodies</button>
+                <button class="filter-btn" onclick="applyFilter('youth', 'oversize', this)">Oversized</button>
+                <button class="filter-btn" onclick="applyFilter('youth', 'denim', this)">Casual Denim</button>
             </div>
             <div class="product-grid" id="youthGrid"></div>
         </section>
@@ -444,57 +510,85 @@
     <footer><p>SYS.DEV: USAMA OUTFITTERS // KARACHI // SECURE NETWORK</p></footer>
 
     <script>
-        // --- 100% ACCURATE INVENTORY EXPANSION ---
+        // --- MASSIVELY EXPANDED INVENTORY (Matching exactly the requested categories) ---
         const catalog = [
-            // STREETWEAR - TOPS (10 Oversized + Others)
-            { id: 's_o1', name: 'Acid Wash Oversize', price: 1899, subCategory: 'oversize', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o2', name: 'Heavy Boxy Blank', price: 1699, subCategory: 'oversize', section: 'streetwear', badge: 'CORE', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o3', name: 'Graphic Drop-Shoulder', price: 1999, subCategory: 'oversize', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o4', name: 'Vintage Faded Oversize', price: 2100, subCategory: 'oversize', section: 'streetwear', badge: 'ARCHIVE', img: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o5', name: 'Earth Tone Drop-Tee', price: 1799, subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1564859228273-274232fdb516?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o6', name: 'Minimalist Boxy Shirt', price: 1599, subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1618517351616-3898bd307a52?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o7', name: 'Retro Print Oversize', price: 1899, subCategory: 'oversize', section: 'streetwear', badge: 'LIMITED', img: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o8', name: 'Washed Black Boxy', price: 1899, subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o9', name: 'Typography Drop-Shoulder', price: 1999, subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o10', name: 'Pastel Oversized Top', price: 1799, subCategory: 'oversize', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80' },
-            
-            // STREETWEAR - BOTTOMS
-            { id: 's_b1', name: 'Distressed Street Jeans', price: 3499, subCategory: 'jeans', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_b2', name: 'Baggy Parachute Cargo', price: 3200, subCategory: 'cargo', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_b3', name: 'Relaxed Fit Chino', price: 2199, subCategory: 'chino', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80' },
+            // STREETWEAR
+            { id: 's1', name: 'Acid Wash Boxy Tee', price: 1899, section: 'streetwear', type: 'oversized', img: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80', badge: 'HOT' },
+            { id: 's2', name: 'Heavyweight Drop-Shoulder', price: 2100, section: 'streetwear', type: 'oversized', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80' },
+            { id: 's3', name: 'Tokyo Drift Graphic Tee', price: 1799, section: 'streetwear', type: 'graphic', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80', badge: 'NEW' },
+            { id: 's4', name: 'Vintage Print Tee', price: 1699, section: 'streetwear', type: 'graphic', img: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=600&q=80' },
+            { id: 's5', name: 'Pique Street Polo', price: 2200, section: 'streetwear', type: 'polo', img: 'https://images.unsplash.com/photo-1586363104862-3a5e222ee1eb?auto=format&fit=crop&w=600&q=80' },
+            { id: 's6', name: 'Tactical Cargo Pants', price: 3400, section: 'streetwear', type: 'cargo', img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80', badge: 'ESSENTIAL' },
+            { id: 's7', name: 'Ripstop Wide Cargo', price: 3600, section: 'streetwear', type: 'cargo', img: 'https://images.unsplash.com/photo-1517423568366-8b83523034fd?auto=format&fit=crop&w=600&q=80' },
+            { id: 's8', name: 'Baggy Y2K Denim', price: 3899, section: 'streetwear', type: 'baggy', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=80', badge: 'TRENDING' },
+            { id: 's9', name: 'Relaxed Fit Wash Denim', price: 3500, section: 'streetwear', type: 'baggy', img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80' },
+            { id: 's10', name: 'Nylon Co-Ord Track Set', price: 5500, section: 'streetwear', type: 'coord', img: 'https://images.unsplash.com/photo-1555689502-c4b22d76c56f?auto=format&fit=crop&w=600&q=80' },
 
-            // PREMIUM (Brands)
-            { id: 'p_t1', name: 'Ralph Lauren Classic Polo', price: 6200, subCategory: 'polo', section: 'premium', badge: 'RALPH LAUREN', img: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?auto=format&fit=crop&w=600&q=80' },
-            { id: 'p_t2', name: 'Hugo Boss Linen Shirt', price: 8500, subCategory: 'polo', section: 'premium', badge: 'HUGO BOSS', img: 'https://images.unsplash.com/photo-1598032895397-b9472444bf93?auto=format&fit=crop&w=600&q=80' },
-            { id: 'p_b1', name: "Levi's 501 Original Jeans", price: 8500, subCategory: 'jeans', section: 'premium', badge: "LEVI'S", img: 'https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80' },
-            { id: 'p_b2', name: 'Stone Island Cargo', price: 14500, subCategory: 'jeans', section: 'premium', badge: 'STONE ISLAND', img: 'https://images.unsplash.com/photo-1555689502-c4b22d76c56f?auto=format&fit=crop&w=600&q=80' },
+            // PREMIUM
+            { id: 'p1', name: 'Ralph Lauren Classic Fit Polo', price: 6500, section: 'premium', type: 'rl_polo', img: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?auto=format&fit=crop&w=600&q=80', badge: 'RALPH LAUREN' },
+            { id: 'p2', name: 'RL Custom Mesh Polo', price: 6800, section: 'premium', type: 'rl_polo', img: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80', badge: 'RALPH LAUREN' },
+            { id: 'p3', name: 'Premium Oxford Cotton Shirt', price: 4500, section: 'premium', type: 'luxury_shirt', img: 'https://images.unsplash.com/photo-1598032895397-b9472444bf93?auto=format&fit=crop&w=600&q=80', badge: '100% COTTON' },
+            { id: 'p4', name: 'Luxury Silk-Blend Casual', price: 5200, section: 'premium', type: 'luxury_shirt', img: 'https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=600&q=80' },
+            { id: 'p5', name: "Levi's 501 Selvedge Denim", price: 8500, section: 'premium', type: 'high_denim', img: 'https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80', badge: "LEVI'S" },
+            { id: 'p6', name: 'Italian Stretch Denim', price: 7800, section: 'premium', type: 'high_denim', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=80' },
+            { id: 'p7', name: 'Executive Tailored Trousers', price: 6200, section: 'premium', type: 'exec', img: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=600&q=80', badge: 'TAILORED' },
+            { id: 'p8', name: 'Smart Casual Chinos', price: 4800, section: 'premium', type: 'exec', img: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80' },
 
-            // YOUTH (Kids)
-            { id: 'y_t1', name: 'Kids Graphic Tee', price: 1299, subCategory: 'tee', section: 'youth', badge: 'NEW', img: 'https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=600&q=80' },
-            { id: 'y_t2', name: 'Boys Classic Shirt', price: 1499, subCategory: 'tee', section: 'youth', badge: '', img: 'https://images.unsplash.com/photo-1514090288891-b3b0dff171a5?auto=format&fit=crop&w=600&q=80' },
-            { id: 'y_b1', name: 'Mini Stretch Denim', price: 1899, subCategory: 'jeans', section: 'youth', badge: 'HOT', img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80' },
-            { id: 'y_b2', name: 'Youth Cargo Shorts', price: 2199, subCategory: 'jeans', section: 'youth', badge: '', img: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=600&q=80' }
+            // YOUTH
+            { id: 'y1', name: 'Youth Anime Graphic Tee', price: 1299, section: 'youth', type: 'graphic', img: 'https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=600&q=80', badge: 'TRENDING' },
+            { id: 'y2', name: 'Street Art Print Tee', price: 1199, section: 'youth', type: 'graphic', img: 'https://images.unsplash.com/photo-1514090288891-b3b0dff171a5?auto=format&fit=crop&w=600&q=80' },
+            { id: 'y3', name: 'Essential Youth Hoodie', price: 2499, section: 'youth', type: 'hoodie', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80' },
+            { id: 'y4', name: 'Mini Oversize Drop-Tee', price: 1499, section: 'youth', type: 'oversize', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80' },
+            { id: 'y5', name: 'Youth Stretch Denim', price: 1899, section: 'youth', type: 'denim', img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80', badge: 'CORE' },
+            { id: 'y6', name: 'Casual Ripstop Cargo', price: 2199, section: 'youth', type: 'denim', img: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=600&q=80' }
         ];
+
+        // Detailed Specs Database for Holographic Modal
+        const itemSpecs = {
+            'oversized': { fabric: '100% Heavyweight Cotton (240 GSM)', fit: 'Boxy / Drop-Shoulder', breathability: '8/10', care: 'Machine wash cold, lay flat to dry', badges: ['100% Premium Cotton', 'Fade Resistant', 'Soft Touch'] },
+            'graphic': { fabric: '100% Organic Cotton', fit: 'Relaxed Street Fit', breathability: '9/10', care: 'Wash inside out', badges: ['Premium Print', 'Breathable'] },
+            'polo': { fabric: 'Premium Cotton Pique', fit: 'Athletic / Smart', breathability: '9/10', care: 'Warm wash, tumble dry low', badges: ['Premium Stitching', 'Classic Fit'] },
+            'cargo': { fabric: 'Military-Grade Ripstop Blend', fit: 'Baggy / Articulated', breathability: '7/10', care: 'Machine wash warm', badges: ['Durable', 'Utility Pockets'] },
+            'baggy': { fabric: '14oz Raw Denim', fit: 'Wide Leg / Y2K', breathability: '6/10', care: 'Wash rarely, inside out', badges: ['Heavyweight', 'Vintage Wash'] },
+            'coord': { fabric: 'Nylon / Spandex Blend', fit: 'Relaxed', breathability: '10/10', care: 'Cold wash only', badges: ['Sport Tech', 'Quick Dry'] },
+            'rl_polo': { fabric: '100% Ring-Spun Cotton Mesh', fit: 'Custom Slim Fit', breathability: '9/10', care: 'Machine washable', badges: ['Imported', 'Quality Assured', 'Iconic'] },
+            'luxury_shirt': { fabric: 'Egyptian Cotton / Silk Blend', fit: 'Tailored', breathability: '8/10', care: 'Dry clean recommended', badges: ['Luxury Finish', 'Wrinkle Resistant'] },
+            'high_denim': { fabric: 'Selvedge Stretch Denim', fit: 'Slim Straight', breathability: '7/10', care: 'Cold wash, hang dry', badges: ['Premium Denim', 'Long Lasting'] },
+            'exec': { fabric: 'Wool Blend / Elastane', fit: 'Tailored Tapered', breathability: '8/10', care: 'Dry clean only', badges: ['Executive Fit', 'Stretch Comfort'] },
+            'hoodie': { fabric: 'French Terry / Fleece Interior', fit: 'Oversized', breathability: '6/10', care: 'Wash cold', badges: ['Ultra Warm', 'Heavyweight'] },
+            'denim': { fabric: 'Stretch Cotton Denim', fit: 'Comfort Straight', breathability: '8/10', care: 'Machine wash', badges: ['Kids Comfort', 'Durable'] }
+        };
 
         let cart = [];
         let activeSection = 'home';
-        let currentSubFilter = 'all';
+        let currentFilters = { streetwear: 'all', premium: 'all', youth: 'all' };
 
-        // --- INIT & SCROLL ---
+        // --- INIT & INTRO ---
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('preloader').style.opacity = '0';
-                document.getElementById('preloader').style.filter = 'blur(10px)';
-                setTimeout(() => document.getElementById('preloader').style.display = 'none', 800);
-            }, 1200);
-            
-            if(window.matchMedia("(hover: hover)").matches) setupHero3D();
-            setupScrollReveals();
-            renderProducts('streetwear');
-            renderProducts('premium');
-            renderProducts('youth');
+            if(!sessionStorage.getItem('introPlayed')) {
+                const intro = document.getElementById('cinematic-intro');
+                setTimeout(() => {
+                    intro.style.opacity = '0';
+                    intro.style.visibility = 'hidden';
+                    sessionStorage.setItem('introPlayed', 'true');
+                    initApp();
+                }, 3500); // 3.5s cinematic intro
+            } else {
+                document.getElementById('cinematic-intro').style.display = 'none';
+                const pl = document.getElementById('preloader');
+                pl.style.display = 'flex';
+                setTimeout(() => { pl.style.opacity = '0'; setTimeout(()=>pl.style.display='none', 800); }, 800);
+                initApp();
+            }
         });
 
+        function initApp() {
+            if(window.matchMedia("(hover: hover)").matches) setupHero3DTracker();
+            setupScrollReveals();
+            ['streetwear', 'premium', 'youth'].forEach(sec => renderProducts(sec));
+        }
+
+        // --- CURSOR EFFECTS ---
         if(window.matchMedia("(hover: hover)").matches) {
             document.addEventListener('mousemove', (e) => {
                 const glow = document.getElementById('cursor-glow');
@@ -502,6 +596,7 @@
             });
         }
 
+        // --- SCROLL EFFECTS ---
         window.addEventListener('scroll', () => {
             const header = document.getElementById('header');
             if (window.scrollY > 50) header.classList.add('scrolled');
@@ -513,27 +608,34 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('in-view');
-                        if(entry.target.classList.contains('vault-card')) applyTiltToElement(entry.target);
                     }
                 });
             }, { threshold: 0.1 });
-            document.querySelectorAll('.reveal-up, .vault-reveal').forEach(el => observer.observe(el));
+            document.querySelectorAll('.fade-up, .mask-reveal').forEach(el => observer.observe(el));
         }
 
-        function setupHero3D() {
-            const hero = document.getElementById('heroScene');
-            const scene = document.getElementById('scene3D');
-            hero.addEventListener('mousemove', (e) => {
-                const rect = hero.getBoundingClientRect();
-                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-                const rotateX = ((y - (rect.height / 2)) / (rect.height / 2)) * -10;
-                const rotateY = ((x - (rect.width / 2)) / (rect.width / 2)) * 10;
-                scene.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        // --- 3D HERO MOUSE TRACKING ---
+        function setupHero3DTracker() {
+            const container = document.querySelector('.hero-container');
+            const scene = document.getElementById('heroScene');
+            const focal = document.querySelector('.hero-focal-text');
+            
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                
+                // Parallax layers
+                scene.style.transform = `rotateY(${x * 15}deg) rotateX(${-y * 15}deg)`;
+                focal.style.transform = `translateZ(100px) translate(${x * -30}px, ${y * -30}px)`;
             });
-            hero.addEventListener('mouseleave', () => { scene.style.transform = `rotateX(0deg) rotateY(0deg)`; });
+            container.addEventListener('mouseleave', () => {
+                scene.style.transform = `rotateY(0deg) rotateX(0deg)`;
+                focal.style.transform = `translateZ(100px) translate(0px, 0px)`;
+            });
         }
 
-        // --- NAVIGATION ---
+        // --- TRANSITIONS & NAV ---
         function triggerSmoothTransition(pageId) {
             if(activeSection === pageId) return;
             const trans = document.getElementById('cyber-transition');
@@ -543,14 +645,6 @@
                 showPage(pageId);
                 trans.classList.remove('active'); trans.classList.add('done');
             }, 500);
-        }
-
-        function warpToArchive() {
-            document.getElementById('scene3D').classList.add('warp-speed');
-            setTimeout(() => {
-                triggerSmoothTransition('streetwear');
-                setTimeout(() => { document.getElementById('scene3D').classList.remove('warp-speed'); }, 500);
-            }, 300);
         }
 
         function toggleMobileMenu() { document.getElementById('mobileNav').classList.toggle('active'); }
@@ -564,123 +658,130 @@
                 btn.classList.remove('active');
                 if (btn.textContent.toLowerCase().includes(pageId) || (pageId==='home' && btn.textContent.includes('ARCHIVE'))) btn.classList.add('active');
             });
-            activeSection = pageId; window.scrollTo({ top: 0, behavior: 'auto' }); 
+            activeSection = pageId; window.scrollTo({ top: 0 });
+            
+            // Re-trigger scroll animations for the new page
+            document.querySelectorAll(`#${pageId} .fade-up`).forEach(el => {
+                el.classList.remove('in-view');
+                setTimeout(() => el.classList.add('in-view'), 100);
+            });
         }
 
-        // --- FILTER & RENDER ---
-        function applySubFilter(section, subId, btn) {
-            currentSubFilter = subId;
+        // --- FILTERING & RENDERING ---
+        function applyFilter(section, type, btn) {
+            currentFilters[section] = type;
             const container = document.getElementById(`${section}-filters`);
-            container.querySelectorAll('.t-filter').forEach(b => b.classList.remove('active'));
+            container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            
             renderProducts(section);
             
-            // Re-trigger animation
+            // Re-trigger premium burst animation
             const grid = document.getElementById(`${section}Grid`);
-            grid.className = 'product-grid stagger-burst'; 
-            void grid.offsetWidth;
+            grid.classList.remove('stagger-burst');
+            void grid.offsetWidth; // Reflow
+            grid.classList.add('stagger-burst');
         }
 
         function renderProducts(section) {
             const container = document.getElementById(`${section}Grid`);
-            const filtered = catalog.filter(p => p.section === section && (currentSubFilter === 'all' || p.subType === currentSubFilter));
+            const activeFilter = currentFilters[section];
+            const filtered = catalog.filter(p => p.section === section && (activeFilter === 'all' || p.type === activeFilter));
 
             if(filtered.length === 0) {
-                container.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-gray); font-family: var(--font-tech); text-align: center; margin-top: 50px;">[ 0 RECORDS FOUND ]</p>`;
+                container.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-secondary); font-family: var(--font-tech); text-align: center; margin-top: 50px;">[ NO INVENTORY FOUND ]</p>`;
                 return;
             }
 
             container.innerHTML = filtered.map((p, i) => {
-                const badge = p.badge ? `<div class="sys-badge">${p.badge}</div>` : '';
+                const badge = p.badge ? `<div class="p-badge">${p.badge}</div>` : '';
                 return `
-                    <div class="tilt-card" style="animation-delay: ${i * 0.1}s;" onclick="openProductModal('${p.id}')">
+                    <div class="prod-card tilt-card" style="animation-delay: ${i * 0.05}s;" onclick="openProductModal('${p.id}')">
                         ${badge}
-                        <div class="card-img-wrapper">
-                            <img src="${p.img}" alt="${p.name}" loading="lazy">
-                        </div>
+                        <div class="card-img-box"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+                        <div class="quick-view-btn"><button>QUICK VIEW</button></div>
                         <div class="card-info">
-                            <div class="card-meta"><div class="card-category">[ ${p.subType} ]</div><div class="card-price">PKR ${p.price}</div></div>
-                            <div class="card-title" style="margin-top:10px;">${p.name}</div>
+                            <div class="card-title">${p.name}</div>
+                            <div class="card-meta">
+                                <div class="card-cat">[ ${p.type.replace('_', ' ')} ]</div>
+                                <div class="card-price">PKR ${p.price}</div>
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
-            
-            document.querySelectorAll('.tilt-card').forEach(card => applyTiltToElement(card));
         }
 
-        function applyTiltToElement(card) {
-            if(!window.matchMedia("(hover: hover)").matches) return; 
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-                const rotateX = ((y - (rect.height / 2)) / (rect.height / 2)) * -8; 
-                const rotateY = ((x - (rect.width / 2)) / (rect.width / 2)) * 8;
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
-            });
-        }
-
-        // --- MAGICAL PRODUCT MODAL ---
-        function getQualityDesc(subType) {
-            const descs = {
-                'oversize': "Constructed with 100% heavyweight 240gsm French Terry Cotton for an ultra-premium drape. Garment-dyed and enzyme washed for a vintage feel that ages perfectly.",
-                'jeans': "Cut from raw 14oz selvedge denim. Engineered for extreme durability with custom reinforced stitching and authentic metal hardware.",
-                'cargo': "Made from ripstop military-grade cotton blend. Features articulated knees and adjustable cuffs for optimal utility and streetwear aesthetics.",
-                'tee': "Knitted from long-staple organic cotton. Exceptionally soft hand-feel with anti-pilling technology to maintain its shape wash after wash."
-            };
-            return descs[subType] || "Engineered with premium, sustainably sourced fabrics. Tailored for an impeccable fit and long-lasting durability in the urban environment.";
-        }
-
+        // --- MAGICAL PRODUCT MODAL (HOLOGRAPHIC) ---
         function openProductModal(id) {
             const p = catalog.find(x => x.id === id);
             if(!p) return;
 
+            // Populate Info
             document.getElementById('modalTitle').innerText = p.name;
             document.getElementById('modalPrice').innerText = `PKR ${p.price}`;
-            document.getElementById('modalBadge').innerText = `[ DIR: ${p.section.toUpperCase()} / ${p.subCategory.toUpperCase()} ]`;
-            document.getElementById('modalDesc').innerText = getQualityDesc(p.subCategory);
+            document.getElementById('modalBadge').innerText = p.badge ? `[ ${p.badge} ]` : `[ ${p.section.toUpperCase()} ]`;
             
-            // Build 3 image views from the same high-res source using CSS magic
+            // Populate Images (3 dynamic views)
             document.getElementById('modalGallery').innerHTML = `
-                <img src="${p.img}" class="modal-img" alt="${p.name}">
-                <img src="${p.img}" class="modal-img" alt="${p.name} Texture">
-                <img src="${p.img}" class="modal-img" alt="${p.name} Edit">
+                <img src="${p.img}" class="modal-img mask-reveal" alt="${p.name}">
+                <img src="${p.img}" class="modal-img mask-reveal" alt="${p.name} Detail" style="transition-delay: 0.1s">
+                <img src="${p.img}" class="modal-img mask-reveal" alt="${p.name} Editorial" style="transition-delay: 0.2s">
             `;
 
-            // Setup Add to Cart inside modal
-            const btn = document.getElementById('modalAddToCart');
-            btn.onclick = () => { addToCart(id); closeModal(); };
+            // Populate Specs
+            const specs = itemSpecs[p.type] || itemSpecs['oversized']; // fallback
+            document.getElementById('modalSpecs').innerHTML = `
+                <div class="spec-item"><span class="spec-label">FABRIC</span><span class="spec-value">${specs.fabric}</span></div>
+                <div class="spec-item"><span class="spec-label">FIT</span><span class="spec-value">${specs.fit}</span></div>
+                <div class="spec-item"><span class="spec-label">BREATHABILITY</span><span class="spec-value">${specs.breathability}</span></div>
+                <div class="spec-item"><span class="spec-label">CARE</span><span class="spec-value">${specs.care}</span></div>
+            `;
+            
+            document.getElementById('modalQualityBadges').innerHTML = specs.badges.map(b => `<span class="quality-badge">${b}</span>`).join('');
 
+            // Add to Cart action
+            document.getElementById('modalAddToCart').onclick = () => { addToCart(id); closeModal(); };
+
+            // Open Modal
             document.getElementById('productModal').classList.add('active');
             
-            // Trigger the Magnetic Button effect
+            // Trigger Image Masks
+            setTimeout(() => {
+                document.querySelectorAll('#modalGallery .mask-reveal').forEach(el => el.classList.add('in-view'));
+            }, 100);
+
             setupMagneticButton();
         }
 
         function closeModal() {
             document.getElementById('productModal').classList.remove('active');
+            document.querySelectorAll('#modalGallery .mask-reveal').forEach(el => el.classList.remove('in-view'));
         }
 
-        // Magnetic Button Effect
+        // Magnetic Button Interaction (Desktop only)
         function setupMagneticButton() {
             if(!window.matchMedia("(hover: hover)").matches) return;
             const wrap = document.getElementById('magneticWrap');
             const btn = document.getElementById('modalAddToCart');
             
-            wrap.addEventListener('mousemove', (e) => {
-                const rect = wrap.getBoundingClientRect();
+            // Clean previous listeners by replacing node
+            const newWrap = wrap.cloneNode(true);
+            wrap.parentNode.replaceChild(newWrap, wrap);
+            const newBtn = newWrap.querySelector('.magnetic-btn');
+            
+            newWrap.addEventListener('mousemove', (e) => {
+                const rect = newWrap.getBoundingClientRect();
                 const x = (e.clientX - rect.left) - (rect.width / 2);
                 const y = (e.clientY - rect.top) - (rect.height / 2);
-                
-                // Pull button towards cursor
-                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                newBtn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
             });
-            wrap.addEventListener('mouseleave', () => {
-                btn.style.transform = `translate(0px, 0px)`;
+            newWrap.addEventListener('mouseleave', () => {
+                newBtn.style.transform = `translate(0px, 0px)`;
             });
+            
+            // Re-attach onclick
+            newBtn.onclick = document.getElementById('modalAddToCart').onclick;
         }
 
         // --- CART SYSTEM ---
@@ -703,7 +804,7 @@
             const container = document.getElementById('cartItems');
             let total = 0;
             if (cart.length === 0) {
-                container.innerHTML = `<p style="color:var(--text-gray); font-family:var(--font-tech); font-size:11px;">[ NO ITEMS DETECTED ]</p>`;
+                container.innerHTML = `<p style="color:var(--text-secondary); font-family:var(--font-tech); font-size:11px;">[ NO ITEMS DETECTED ]</p>`;
             } else {
                 container.innerHTML = cart.map((item, i) => {
                     total += item.price;
