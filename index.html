@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USAMA | Futuristic Luxury Streetwear</title>
+    <title>USAMA | Engineered Streetwear</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Inter:wght@300;400;500;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ===== CORE VARIABLES ===== */
+        /* ===== CSS VARIABLES & RESET ===== */
         :root {
             --bg-base: #030303;
             --bg-surface: #0a0a0a;
@@ -25,35 +25,48 @@
             --font-tech: 'Space Mono', monospace;
             
             --easing-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-            --easing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        html { scroll-behavior: smooth; cursor: none; } /* Hide default cursor */
         body {
             font-family: var(--font-body); background-color: var(--bg-base);
             color: var(--text-primary); overflow-x: hidden;
             -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
         }
 
+        /* ===== CUSTOM CURSOR (The Surprise) ===== */
+        .cursor-dot {
+            width: 6px; height: 6px; background-color: var(--accent-glow);
+            position: fixed; border-radius: 50%; pointer-events: none;
+            z-index: 999999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s;
+        }
+        .cursor-ring {
+            width: 34px; height: 34px; border: 1px solid rgba(224, 255, 0, 0.5);
+            position: fixed; border-radius: 50%; pointer-events: none;
+            z-index: 999998; transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+            transition-timing-function: ease-out;
+        }
+        body:hover .cursor-dot { opacity: 1; }
+        body:hover .cursor-ring { opacity: 1; }
+        
+        /* Disable custom cursor on mobile */
+        @media (hover: none) and (pointer: coarse) {
+            html { cursor: auto; }
+            .cursor-dot, .cursor-ring { display: none !important; }
+        }
+
         /* ===== AMBIENT VFX & MESH GRADIENT ===== */
         .ambient-mesh {
             position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
             background: 
-                radial-gradient(circle at 50% 50%, rgba(224, 255, 0, 0.03), transparent 60%),
-                radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.02), transparent 50%);
-            z-index: 0; pointer-events: none;
-            animation: meshRotate 30s linear infinite;
+                radial-gradient(circle at 50% 50%, rgba(224, 255, 0, 0.04), transparent 60%),
+                radial-gradient(circle at 80% 20%, rgba(0, 150, 255, 0.03), transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(255, 0, 150, 0.03), transparent 50%);
+            z-index: 0; pointer-events: none; animation: meshRotate 40s linear infinite;
         }
-        @keyframes meshRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .cursor-light {
-            position: fixed; top: 0; left: 0; width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(224, 255, 0, 0.06) 0%, transparent 60%);
-            transform: translate(-50%, -50%); pointer-events: none; z-index: 1; 
-            mix-blend-mode: screen; transition: opacity 0.3s; opacity: 0;
-        }
-        @media (min-width: 1024px) { body:hover .cursor-light { opacity: 1; } }
+        @keyframes meshRotate { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
 
         .floating-particles {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -63,56 +76,77 @@
         }
         @keyframes particleFloat { 0% { background-position: 0 0; } 100% { background-position: 1000px 1000px; } }
 
-        /* ===== ONE-TIME CINEMATIC INTRO ===== */
+        /* ===== SMOOTH PAGE TRANSITIONS ===== */
+        main { position: relative; z-index: 10; transition: opacity 0.4s ease, filter 0.4s ease, transform 0.5s var(--easing-smooth); }
+        main.page-transitioning { opacity: 0; filter: blur(10px); transform: scale(0.98); }
+
+        /* ===== CINEMATIC SPLIT-SCREEN INTRO ===== */
         #cinematic-intro {
-            position: fixed; inset: 0; background: var(--bg-base); z-index: 100000;
+            position: fixed; inset: 0; z-index: 100000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1s var(--easing-smooth), visibility 1s;
+            pointer-events: none;
         }
+        .shutter { position: absolute; left: 0; width: 100%; height: 50vh; background: var(--bg-base); transition: transform 1s var(--easing-smooth); z-index: 100001; border-top: 1px solid var(--accent-glow); border-bottom: 1px solid var(--accent-glow);}
+        .shutter-top { top: 0; transform-origin: top; }
+        .shutter-bottom { bottom: 0; transform-origin: bottom; }
+        
+        .intro-brand-wrapper { z-index: 100002; text-align: center; }
         .intro-brand {
-            font-family: var(--font-display); font-size: clamp(2rem, 6vw, 5rem);
-            font-weight: 800; letter-spacing: 0.5em; text-transform: uppercase;
-            color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2);
-            position: relative; overflow: hidden;
+            font-family: var(--font-display); font-size: clamp(2rem, 6vw, 5rem); font-weight: 800; letter-spacing: 0.5em; text-transform: uppercase;
+            color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2); position: relative; overflow: hidden;
         }
         .intro-brand::before {
             content: 'USAMA'; position: absolute; left: 0; top: 0; width: 0%; height: 100%;
-            color: var(--white); -webkit-text-stroke: 0px; overflow: hidden;
-            border-right: 2px solid var(--accent-glow);
-            animation: typeReveal 1.5s var(--easing-smooth) 0.5s forwards, pulseGlow 2s infinite;
+            color: var(--white); -webkit-text-stroke: 0px; overflow: hidden; border-right: 2px solid var(--accent-glow);
+            animation: typeReveal 1s var(--easing-smooth) 0.5s forwards, pulseGlow 2s infinite;
         }
-        .intro-subtitle {
-            font-family: var(--font-tech); font-size: 10px; color: var(--text-secondary);
-            margin-top: 20px; letter-spacing: 4px; opacity: 0;
-            animation: fadeUp 1s var(--easing-smooth) 1.5s forwards;
-        }
-        @keyframes typeReveal { to { width: 100%; } }
-        @keyframes pulseGlow { 0%, 100% { text-shadow: 0 0 20px rgba(224,255,0,0); } 50% { text-shadow: 0 0 30px rgba(224,255,0,0.4); } }
+        .intro-subtitle { font-family: var(--font-tech); font-size: 10px; color: var(--text-secondary); margin-top: 20px; letter-spacing: 4px; opacity: 0; animation: fadeUp 0.8s var(--easing-smooth) 1.2s forwards; }
+        
+        #cinematic-intro.opening .shutter-top { transform: translateY(-100%); }
+        #cinematic-intro.opening .shutter-bottom { transform: translateY(100%); }
+        #cinematic-intro.opening .intro-brand-wrapper { opacity: 0; transition: 0.5s; filter: blur(10px); }
 
-        /* ===== HEADER & NAVIGATION ===== */
+        /* ===== PRELOADER (Internal Navigation) ===== */
+        #preloader {
+            position: fixed; inset: 0; background: var(--bg-base); z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.5s, filter 0.5s;
+        }
+        .sys-boot { font-family: var(--font-tech); font-size: 12px; color: var(--accent-glow); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* ===== SYSTEM TRANSITIONS ===== */
+        #cyber-transition {
+            position: fixed; top: 0; left: -100%; width: 100%; height: 100vh;
+            background: var(--accent-glow); z-index: 99999; mix-blend-mode: difference;
+            transition: left 0.5s cubic-bezier(0.7, 0, 0.3, 1); pointer-events: none;
+        }
+        #cyber-transition.active { left: 0; }
+        #cyber-transition.done { left: 100%; }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes typeReveal { to { width: 100%; } }
+        @keyframes pulseGlow { 0%, 100% { text-shadow: 0 0 20px rgba(224,255,0,0); } 50% { text-shadow: 0 0 30px rgba(224,255,0,0.5); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes premiumReveal { 0% { opacity: 0; transform: perspective(1000px) translateY(30px) rotateX(-10deg) scale(0.95); filter: blur(5px); } 100% { opacity: 1; transform: perspective(1000px) translateY(0) rotateX(0) scale(1); filter: blur(0); } }
+        .stagger-burst .tilt-card { opacity: 0; animation: premiumReveal 0.6s var(--easing-smooth) forwards; }
+        .reveal-up { opacity: 0; transform: translateY(40px); filter: blur(3px); transition: all 0.8s var(--easing-smooth); }
+        .reveal-up.in-view { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+        /* ===== HEADER & MOBILE MENU ===== */
         header { 
             position: fixed; top: 0; left: 0; width: 100%; padding: 25px 5%; z-index: 1000; 
             display: flex; justify-content: space-between; align-items: center; 
             transition: all 0.5s var(--easing-smooth); background: transparent; 
         }
-        header.scrolled { 
-            background: rgba(3, 3, 3, 0.85); backdrop-filter: blur(20px); 
-            padding: 15px 5%; border-bottom: 1px solid var(--glass-border); 
-        }
+        header.scrolled { background: rgba(3, 3, 3, 0.85); backdrop-filter: blur(20px); padding: 15px 5%; border-bottom: 1px solid var(--glass-border); }
         .brand-logo { font-family: var(--font-display); font-size: clamp(16px, 4vw, 22px); font-weight: 800; color: var(--white); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; z-index: 1002;}
         
         .nav-links { display: none; gap: 35px; z-index: 1002;}
         @media (min-width: 900px) { .nav-links { display: flex; } }
         .nav-links button { 
-            background: none; border: none; color: var(--text-secondary); 
-            font-family: var(--font-tech); font-size: 11px; font-weight: 600; 
-            text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; 
-            cursor: pointer; position: relative; padding: 5px 0;
+            background: none; border: none; color: var(--text-secondary); font-family: var(--font-tech); font-size: 11px; font-weight: 600; 
+            text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; cursor: pointer; position: relative; padding: 5px 0;
         }
-        .nav-links button::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
-            background: var(--accent-glow); transition: width 0.3s ease;
-        }
+        .nav-links button::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--accent-glow); transition: width 0.3s ease; }
         .nav-links button:hover::after, .nav-links button.active::after { width: 100%; }
         .nav-links button:hover, .nav-links button.active { color: var(--white); }
         
@@ -124,71 +158,52 @@
         .mobile-menu-btn { display: none; background: none; border: none; color: var(--white); font-size: 20px; cursor: pointer; z-index: 1002;}
         @media (max-width: 899px) { .mobile-menu-btn { display: block; } }
 
+        .mobile-nav {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(5,5,5,0.98);
+            backdrop-filter: blur(15px); z-index: 1001; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 30px; opacity: 0; visibility: hidden; transition: 0.4s;
+        }
+        .mobile-nav.active { opacity: 1; visibility: visible; }
+        .mobile-nav button { background: none; border: none; color: var(--white); font-family: var(--font-display); font-size: 2rem; text-transform: uppercase; font-weight: 800; cursor: pointer; transform: translateY(20px); opacity: 0; transition: 0.4s; }
+        .mobile-nav.active button { transform: translateY(0); opacity: 1; }
+
         /* ===== FUTURISTIC HERO SECTION ===== */
         .hero-container { position: relative; height: 100vh; width: 100%; overflow: hidden; perspective: 2000px; display: flex; align-items: center; justify-content: center; }
         
-        /* Focal Text "USAMA" */
-        .hero-focal-text {
-            position: absolute; z-index: 5; text-align: center; pointer-events: none;
-            transform-style: preserve-3d; transform: translateZ(100px);
-        }
+        .hero-focal-text { position: absolute; z-index: 5; text-align: center; pointer-events: none; transform-style: preserve-3d; transform: translateZ(100px); }
         .hero-focal-text h1 {
-            font-family: var(--font-display); font-size: clamp(5rem, 15vw, 15rem);
-            font-weight: 800; line-height: 0.8; text-transform: uppercase;
-            color: var(--white); position: relative;
-            text-shadow: 0 0 100px rgba(224, 255, 0, 0.2);
-            animation: textBreathe 4s infinite alternate;
+            font-family: var(--font-display); font-size: clamp(5rem, 15vw, 15rem); font-weight: 800; line-height: 0.8; text-transform: uppercase;
+            color: var(--white); position: relative; text-shadow: 0 0 100px rgba(224, 255, 0, 0.2); animation: textBreathe 4s infinite alternate;
         }
         @keyframes textBreathe { 0% { transform: scale(1); text-shadow: 0 0 80px rgba(224, 255, 0, 0.1); } 100% { transform: scale(1.02); text-shadow: 0 0 120px rgba(224, 255, 0, 0.3); } }
 
-        /* Dynamic Glow behind text */
+        /* Glowing Orb Background */
         .hero-glow {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(224,255,0,0.15) 0%, transparent 60%);
-            filter: blur(60px); z-index: 4; pointer-events: none;
+            width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(224,255,0,0.12) 0%, transparent 60%);
+            filter: blur(80px); z-index: 4; pointer-events: none; animation: orbPulse 6s infinite alternate;
         }
+        @keyframes orbPulse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7;} 100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1;} }
 
-        /* Floating Parallax Fashion Images */
+        /* Floating Parallax Fashion Images (Updated to high-end Unsplash models) */
         .hero-3d-scene { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.1s ease-out; z-index: 6; pointer-events: none;}
+        .hero-img-panel { position: absolute; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.8); border: 1px solid var(--glass-border); transform-style: preserve-3d; background: var(--bg-surface); }
+        .hero-img-panel img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(30%) contrast(1.1); transition: 0.8s var(--easing-smooth); }
+        .hero-img-panel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); }
         
-        .hero-img-panel {
-            position: absolute; border-radius: 4px; overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8); border: 1px solid var(--glass-border);
-            transform-style: preserve-3d; background: var(--bg-surface);
-        }
-        .hero-img-panel img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%) contrast(1.1); transition: 0.8s var(--easing-smooth); }
-        .hero-img-panel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }
-        
-        .panel-1 { width: clamp(160px, 20vw, 300px); height: clamp(240px, 30vw, 420px); top: 15%; left: 10%; transform: translateZ(200px) rotateY(15deg) rotateX(10deg); }
-        .panel-2 { width: clamp(180px, 25vw, 350px); height: clamp(260px, 35vw, 480px); bottom: 10%; right: 10%; transform: translateZ(300px) rotateY(-20deg) rotateX(-5deg); }
-        .panel-3 { width: clamp(120px, 15vw, 220px); height: clamp(180px, 22vw, 320px); top: 20%; right: 25%; transform: translateZ(100px) rotateY(-10deg); opacity: 0.6; filter: blur(3px);}
+        /* EDGY FASHION SHOTS */
+        .panel-1 { width: clamp(180px, 22vw, 320px); height: clamp(260px, 32vw, 440px); top: 15%; left: 8%; transform: translateZ(200px) rotateY(15deg) rotateX(10deg); }
+        .panel-2 { width: clamp(200px, 26vw, 380px); height: clamp(280px, 36vw, 500px); bottom: 10%; right: 8%; transform: translateZ(300px) rotateY(-20deg) rotateX(-5deg); }
+        .panel-3 { width: clamp(140px, 16vw, 240px); height: clamp(200px, 24vw, 340px); top: 20%; right: 22%; transform: translateZ(100px) rotateY(-10deg); opacity: 0.6; filter: blur(3px);}
         @media (max-width: 768px) { .panel-1 { top: 25%; left: 5%; } .panel-2 { bottom: 20%; right: 5%; transform: translateZ(150px); } .panel-3 { display: none; } }
 
-        .hero-cta {
-            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%) translateZ(400px);
-            z-index: 20; display: flex; flex-direction: column; align-items: center; gap: 15px;
-        }
+        .hero-cta { position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%) translateZ(400px); z-index: 20; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .explore-btn {
-            background: var(--white); color: var(--bg-base); font-family: var(--font-tech);
-            padding: 18px 50px; font-size: 12px; font-weight: 800; border: none; border-radius: 2px;
-            text-transform: uppercase; cursor: pointer; position: relative; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(255,255,255,0.1); transition: var(--transition);
+            background: var(--white); color: var(--bg-base); font-family: var(--font-tech); padding: 18px 50px; font-size: 12px; font-weight: 800; border: none; border-radius: 2px; text-transform: uppercase; cursor: none; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(255,255,255,0.1); transition: var(--transition);
         }
-        /* Premium Shine Sweep on Button */
-        .explore-btn::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0,0,0,0.15), transparent);
-            transform: skewX(-25deg); transition: 0s; pointer-events: none;
-        }
+        .explore-btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,0,0,0.15), transparent); transform: skewX(-25deg); transition: 0s; pointer-events: none; }
         .explore-btn:hover::after { left: 200%; transition: 0.7s ease-in-out; }
         .explore-btn:hover { background: var(--accent-glow); box-shadow: 0 15px 40px rgba(224, 255, 0, 0.4); transform: scale(1.05); }
-
-        /* ===== SCROLL ANIMATIONS & MASKS ===== */
-        .mask-reveal { clip-path: inset(100% 0 0 0); transition: clip-path 1.2s var(--easing-smooth); }
-        .mask-reveal.in-view { clip-path: inset(0 0 0 0); }
-        
-        .fade-up { opacity: 0; transform: translateY(50px); transition: all 0.8s var(--easing-smooth); }
-        .fade-up.in-view { opacity: 1; transform: translateY(0); }
 
         /* ===== SECTIONS & LAYOUT ===== */
         .page-section { display: none; padding-top: 120px; min-height: 100vh; position: relative; z-index: 10;}
@@ -200,69 +215,32 @@
         .sys-tag { font-family: var(--font-tech); font-size: 10px; color: var(--accent-glow); position: absolute; top: 20px; left: 5%; letter-spacing: 2px;}
         @media (max-width: 768px) { .sys-tag { position: static; margin-bottom: 15px; display: block;} }
 
-        /* ===== HORIZONTAL FILTERS ===== */
-        .filter-container {
-            display: flex; gap: 10px; padding: 0 5% 30px; overflow-x: auto;
-            scrollbar-width: none; -webkit-overflow-scrolling: touch;
-        }
+        /* Horizontal Filters */
+        .filter-container { display: flex; gap: 10px; padding: 0 5% 30px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .filter-container::-webkit-scrollbar { display: none; }
-        
-        .filter-btn {
-            background: var(--bg-elevated); border: 1px solid var(--glass-border);
-            color: var(--text-secondary); font-family: var(--font-tech); font-size: 10px;
-            padding: 10px 20px; cursor: pointer; text-transform: uppercase; white-space: nowrap;
-            border-radius: 4px; transition: var(--transition); letter-spacing: 1px;
-        }
-        .filter-btn.active, .filter-btn:hover {
-            background: rgba(224, 255, 0, 0.05); color: var(--white); border-color: var(--accent-glow);
-            box-shadow: 0 0 15px rgba(224, 255, 0, 0.1); transform: translateY(-2px);
-        }
+        .filter-btn { background: var(--bg-elevated); border: 1px solid var(--glass-border); color: var(--text-secondary); font-family: var(--font-tech); font-size: 10px; padding: 10px 20px; cursor: none; text-transform: uppercase; white-space: nowrap; border-radius: 4px; transition: var(--transition); letter-spacing: 1px; }
+        .filter-btn.active, .filter-btn:hover { background: rgba(224, 255, 0, 0.05); color: var(--white); border-color: var(--accent-glow); box-shadow: 0 0 15px rgba(224, 255, 0, 0.1); transform: translateY(-2px); }
 
         /* ===== PREMIUM PRODUCT CARDS ===== */
-        .product-grid { 
-            display: grid; padding: 0 5% 100px; gap: 30px;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
-        }
+        .product-grid { display: grid; padding: 0 5% 100px; gap: 30px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
         @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px;} }
 
-        .prod-card {
-            position: relative; background: var(--bg-surface); border: 1px solid var(--glass-border);
-            border-radius: 4px; overflow: hidden; cursor: pointer;
-            transition: transform 0.4s var(--easing-smooth), border-color 0.4s;
-        }
+        .prod-card { position: relative; background: var(--bg-surface); border: 1px solid var(--glass-border); border-radius: 4px; overflow: hidden; cursor: none; transition: transform 0.4s var(--easing-smooth), border-color 0.4s; }
         .prod-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        
-        /* Animated Hover Border Glow */
-        .prod-card::after {
-            content: ''; position: absolute; inset: -1px; z-index: -1;
-            background: linear-gradient(45deg, transparent, var(--accent-glow), transparent);
-            opacity: 0; transition: opacity 0.5s; filter: blur(10px);
-        }
+        .prod-card::after { content: ''; position: absolute; inset: -1px; z-index: -1; background: linear-gradient(45deg, transparent, var(--accent-glow), transparent); opacity: 0; transition: opacity 0.5s; filter: blur(10px); }
         .prod-card:hover::after { opacity: 0.3; }
 
         .card-img-box { width: 100%; aspect-ratio: 3/4; overflow: hidden; position: relative; background: var(--bg-elevated); }
         .card-img-box img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.8s var(--easing-smooth), filter 0.8s; }
         .prod-card:hover .card-img-box img { transform: scale(1.08); filter: contrast(1.1); }
         
-        .p-badge {
-            position: absolute; top: 15px; left: 15px; background: var(--glass-bg); backdrop-filter: blur(5px);
-            border: 1px solid var(--accent-glow); color: var(--accent-glow); padding: 4px 10px;
-            font-family: var(--font-tech); font-size: 9px; text-transform: uppercase; z-index: 2;
-        }
+        .p-badge { position: absolute; top: 15px; left: 15px; background: var(--glass-bg); backdrop-filter: blur(5px); border: 1px solid var(--accent-glow); color: var(--accent-glow); padding: 4px 10px; font-family: var(--font-tech); font-size: 9px; text-transform: uppercase; z-index: 2; }
 
-        .quick-view-btn {
-            position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            padding: 30px 15px 15px; transform: translateY(100%); transition: transform 0.4s var(--easing-smooth);
-            display: flex; justify-content: center; z-index: 2;
-        }
+        .quick-view-btn { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 30px 15px 15px; transform: translateY(100%); transition: transform 0.4s var(--easing-smooth); display: flex; justify-content: center; z-index: 2; }
         @media(hover: hover) { .prod-card:hover .quick-view-btn { transform: translateY(0); } }
         @media(hover: none) { .quick-view-btn { transform: translateY(0); padding: 15px; background: transparent; position: relative;} .card-img-box{aspect-ratio: 4/5;} }
         
-        .quick-view-btn button {
-            width: 100%; background: var(--white); color: var(--black); border: none; border-radius: 2px;
-            padding: 12px; font-family: var(--font-tech); font-size: 11px; font-weight: 700; text-transform: uppercase; 
-            cursor: pointer; transition: 0.3s; position: relative; overflow: hidden;
-        }
+        .quick-view-btn button { width: 100%; background: var(--white); color: var(--black); border: none; border-radius: 2px; padding: 12px; font-family: var(--font-tech); font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: none; transition: 0.3s; position: relative; overflow: hidden; }
         .quick-view-btn button:hover { background: var(--accent-glow); }
 
         .card-info { padding: 20px 15px; border-top: 1px solid var(--glass-border); background: var(--bg-surface);}
@@ -272,103 +250,77 @@
         .card-price { font-family: var(--font-tech); font-size: 12px; color: var(--accent-glow); font-weight: 700; }
 
         /* ===== HOLOGRAPHIC PRODUCT MODAL ===== */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(3,3,3,0.95); backdrop-filter: blur(20px);
-            z-index: 9999; display: flex; align-items: center; justify-content: center;
-            opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0.5s;
-        }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(3,3,3,0.95); backdrop-filter: blur(20px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0.5s; }
+        .modal-overlay.active { opacity: 1; visibility: visible; cursor: none;}
 
-        .holo-scanner {
-            position: absolute; top: -10%; left: 0; width: 100%; height: 2px;
-            background: var(--accent-glow); box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow);
-            z-index: 10000; opacity: 0; pointer-events: none;
-        }
+        .holo-scanner { position: absolute; top: -10%; left: 0; width: 100%; height: 2px; background: var(--accent-glow); box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow); z-index: 10000; opacity: 0; pointer-events: none; }
         .modal-overlay.active .holo-scanner { animation: scanLine 1.5s var(--easing-smooth) forwards; }
         @keyframes scanLine { 0% { top: -10%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 110%; opacity: 0; } }
 
-        .modal-content {
-            width: 95%; max-width: 1200px; height: 85vh; background: var(--bg-surface);
-            border: 1px solid var(--glass-border); border-radius: 4px; display: flex; flex-direction: row;
-            overflow: hidden; opacity: 0; transform: scale(0.95) translateY(20px);
-            transition: all 0.6s var(--easing-smooth) 0.2s; box-shadow: 0 40px 100px rgba(0,0,0,0.9);
-            position: relative;
-        }
+        .modal-content { width: 95%; max-width: 1200px; height: 85vh; background: var(--bg-surface); border: 1px solid var(--glass-border); border-radius: 4px; display: flex; flex-direction: row; overflow: hidden; opacity: 0; transform: scale(0.95) translateY(20px); transition: all 0.6s var(--easing-smooth) 0.2s; box-shadow: 0 40px 100px rgba(0,0,0,0.9); position: relative; }
         @media (max-width: 900px) { .modal-content { flex-direction: column; height: 92vh; overflow-y: auto; } }
         .modal-overlay.active .modal-content { opacity: 1; transform: scale(1) translateY(0); }
 
-        .close-modal {
-            position: absolute; top: 20px; right: 20px; background: var(--glass-bg); border: 1px solid var(--glass-border);
-            color: var(--white); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-size: 20px; cursor: pointer; z-index: 10; transition: 0.3s;
-        }
+        .close-modal { position: absolute; top: 20px; right: 20px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--white); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: none; z-index: 10; transition: 0.3s; }
         .close-modal:hover { background: var(--white); color: var(--black); transform: rotate(90deg); }
 
-        /* 3 Image Layout */
         .modal-gallery { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: #000; }
         @media (max-width: 900px) { .modal-gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; flex: none; height: 50vh; scrollbar-width: none;} }
-        
         .modal-img { width: 100%; height: 100%; object-fit: cover; background: var(--bg-elevated);}
         @media (max-width: 900px) { .modal-img { flex: 0 0 100%; scroll-snap-align: start; } }
-        .modal-img:nth-child(1) { grid-column: 1 / 2; grid-row: 1 / 3; } /* Main */
-        .modal-img:nth-child(2) { object-position: 50% 20%; transform: scale(1.3); transform-origin: top; } /* Zoom Detail */
-        .modal-img:nth-child(3) { filter: grayscale(100%) contrast(1.2); } /* Editorial Black & White */
+        .modal-img:nth-child(1) { grid-column: 1 / 2; grid-row: 1 / 3; } 
+        .modal-img:nth-child(2) { object-position: 50% 20%; transform: scale(1.3); transform-origin: top; } 
+        .modal-img:nth-child(3) { filter: grayscale(100%) contrast(1.2); }
 
-        .modal-details {
-            width: 450px; padding: 40px; display: flex; flex-direction: column; 
-            background: var(--bg-base); overflow-y: auto;
-        }
+        .modal-details { width: 450px; padding: 40px; display: flex; flex-direction: column; background: var(--bg-base); overflow-y: auto; }
         @media (max-width: 900px) { .modal-details { width: 100%; padding: 25px; flex: none; } }
 
         .md-brand { font-family: var(--font-tech); font-size: 10px; color: var(--accent-glow); letter-spacing: 2px; margin-bottom: 10px; }
         .md-title { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.5rem); text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }
         .md-price { font-family: var(--font-tech); font-size: 18px; color: var(--white); margin-bottom: 30px; font-weight: 700;}
         
-        /* Premium Specs Grid */
         .specs-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 30px; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); padding: 20px 0;}
         .spec-item { display: flex; justify-content: space-between; font-size: 12px; font-family: var(--font-tech); text-transform: uppercase;}
         .spec-label { color: var(--text-secondary); }
         .spec-value { color: var(--white); font-weight: 700; text-align: right;}
         
-        .md-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px;}
+        .md-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px;}
         .quality-badge { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 5px 10px; font-size: 9px; font-family: var(--font-tech); text-transform: uppercase; border-radius: 2px; color: #ccc;}
 
-        /* Magnetic Button */
+        /* Authenticity Block */
+        .auth-box { display: flex; align-items: center; gap: 10px; padding: 15px; background: rgba(224, 255, 0, 0.05); border: 1px solid rgba(224, 255, 0, 0.2); margin-bottom: 30px; border-radius: 4px; }
+        .auth-box i { color: var(--accent-glow); font-size: 18px; }
+        .auth-box span { font-family: var(--font-tech); font-size: 9px; color: var(--white); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4;}
+
         .magnetic-wrap { display: inline-block; padding: 20px; margin: -20px; margin-top: auto;}
-        .magnetic-btn {
-            background: var(--white); color: var(--black); font-family: var(--font-tech); font-size: 12px;
-            font-weight: 700; text-transform: uppercase; padding: 20px; border: none; width: 100%;
-            cursor: pointer; transition: transform 0.2s ease-out, background 0.3s;
-            position: relative; overflow: hidden; border-radius: 2px; box-shadow: 0 10px 20px rgba(255,255,255,0.1);
-        }
+        .magnetic-btn { background: var(--white); color: var(--black); font-family: var(--font-tech); font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 20px; border: none; width: 100%; cursor: none; transition: transform 0.2s ease-out, background 0.3s; position: relative; overflow: hidden; border-radius: 2px; box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
         .magnetic-btn:hover { background: var(--accent-glow); box-shadow: 0 15px 30px rgba(224,255,0,0.3); }
 
-        /* ===== CART SIDEBAR & WHATSAPP ===== */
-        .wa-float { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background-color: var(--wa-green); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); z-index: 9000; text-decoration: none; transition: var(--transition); border: 2px solid rgba(255,255,255,0.1); }
+        /* ===== WA & CART ===== */
+        .wa-float { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background-color: var(--wa-green); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); z-index: 9000; text-decoration: none; transition: var(--transition); border: 2px solid rgba(255,255,255,0.1); cursor: none;}
         .wa-float:hover { transform: scale(1.1) rotate(10deg); background-color: #1EBE5D; box-shadow: 0 15px 40px rgba(37, 211, 102, 0.6); }
         
         .cart-sidebar { position: fixed; top: 0; right: -500px; width: 100%; max-width: 450px; height: 100vh; background: rgba(5,5,5,0.98); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); z-index: 2001; transition: right 0.6s var(--easing-smooth); display: flex; flex-direction: column; padding: 30px; }
-        .cart-sidebar.open { right: 0; }
+        .cart-sidebar.open { right: 0; cursor: none;}
         .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition); backdrop-filter: blur(8px); }
-        .cart-overlay.open { opacity: 1; visibility: visible; }
+        .cart-overlay.open { opacity: 1; visibility: visible; cursor: none;}
         
         .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border);}
         .cart-header h2 { font-family: var(--font-display); text-transform: uppercase; font-size: 20px;}
-        .close-cart { background: none; border: none; color: var(--white); font-size: 28px; transition: 0.4s; cursor: pointer;}
+        .close-cart { background: none; border: none; color: var(--white); font-size: 28px; transition: 0.4s; cursor: none;}
         .close-cart:hover { color: var(--accent-glow); transform: rotate(90deg); }
         
         .cart-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px; scrollbar-width: thin; scrollbar-color: var(--glass-border) transparent;}
-        
         .cart-item { display: flex; gap: 15px; align-items: center; border: 1px solid var(--glass-border); padding: 10px; background: rgba(255,255,255,0.01); border-radius: 4px; transition: 0.3s;}
         .cart-item img { width: 65px; height: 85px; object-fit: cover; border-radius: 2px;}
         .cart-item-details { flex: 1; }
         .cart-item-title { font-family: var(--font-display); font-size: 11px; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; }
         .cart-item-price { color: var(--accent-glow); font-family: var(--font-tech); font-size: 12px; }
-        .remove-item { background: none; border: none; color: #ff4444; font-family: var(--font-tech); font-size: 9px; text-transform: uppercase; margin-top: 10px; transition: 0.3s; cursor: pointer;}
+        .remove-item { background: none; border: none; color: #ff4444; font-family: var(--font-tech); font-size: 9px; text-transform: uppercase; margin-top: 10px; transition: 0.3s; cursor: none;}
         
         .cart-footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--glass-border); }
         .cart-total { display: flex; justify-content: space-between; font-family: var(--font-tech); font-size: 14px; margin-bottom: 20px; }
-        .checkout-btn { width: 100%; padding: 18px; background: var(--white); color: var(--black); font-family: var(--font-tech); border: none; font-weight: 700; text-transform: uppercase; transition: 0.4s; cursor: pointer;}
+        .checkout-btn { width: 100%; padding: 18px; background: var(--white); color: var(--black); font-family: var(--font-tech); border: none; font-weight: 700; text-transform: uppercase; transition: 0.4s; cursor: none;}
         .checkout-btn:hover { background: var(--accent-glow); box-shadow: 0 10px 30px rgba(224, 255, 0, 0.3);}
         
         footer { padding: 40px 5%; border-top: 1px solid var(--glass-border); text-align: center; color: var(--text-secondary); font-family: var(--font-tech); font-size: 10px; text-transform: uppercase; letter-spacing: 2px;}
@@ -376,13 +328,20 @@
 </head>
 <body>
 
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
     <div class="ambient-mesh"></div>
     <div class="floating-particles"></div>
     <div id="cursor-glow"></div>
 
     <div id="cinematic-intro">
-        <div class="intro-brand">USAMA</div>
-        <div class="intro-subtitle">ENGINEERED STREETWEAR</div>
+        <div class="shutter shutter-top"></div>
+        <div class="shutter shutter-bottom"></div>
+        <div class="intro-brand-wrapper">
+            <div class="intro-brand">USAMA</div>
+            <div class="intro-subtitle">ENGINEERED STREETWEAR</div>
+        </div>
     </div>
 
     <div id="preloader" style="display: none;">
@@ -405,6 +364,11 @@
                 
                 <div class="specs-grid" id="modalSpecs">
                     </div>
+
+                <div class="auth-box">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>100% AUTHENTICITY GUARANTEED. ENGINEERED IN KARACHI.</span>
+                </div>
 
                 <div class="md-badges" id="modalQualityBadges">
                     </div>
@@ -452,13 +416,12 @@
         
         <section id="home" class="page-section active">
             <div class="hero-container">
-                <div class="hero-focal-text"><h1>USAMA</h1></div>
-                <div class="hero-glow"></div>
+                <div class="hero-focal-text"><h1 data-value="USAMA" class="decode-text">USAMA</h1></div>
                 
                 <div class="hero-3d-scene" id="heroScene">
-                    <div class="hero-img-panel panel-1"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Premium Fit"></div>
-                    <div class="hero-img-panel panel-2"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80" alt="Streetwear Fit"></div>
-                    <div class="hero-img-panel panel-3"><img src="https://images.unsplash.com/photo-1485230405346-71acb9518d9c?auto=format&fit=crop&w=600&q=80" alt="Youth Fit"></div>
+                    <div class="hero-img-panel panel-1"><img src="https://images.unsplash.com/photo-1529139574466-a303027c028c?auto=format&fit=crop&w=600&q=80" alt="Streetwear Fit"></div>
+                    <div class="hero-img-panel panel-2"><img src="https://images.unsplash.com/photo-1550614000-4b95d4ebfaeb?auto=format&fit=crop&w=600&q=80" alt="Premium Fit"></div>
+                    <div class="hero-img-panel panel-3"><img src="https://images.unsplash.com/photo-1520975954732-57dd22299614?auto=format&fit=crop&w=600&q=80" alt="Youth Fit"></div>
                 </div>
 
                 <div class="hero-cta">
@@ -469,12 +432,12 @@
         </section>
 
         <section id="streetwear" class="page-section">
-            <div class="section-header fade-up"><div class="sys-tag">DIR: /STREETWEAR</div><h2>Streetwear</h2></div>
+            <div class="section-header fade-up"><div class="sys-tag">DIR: /STREETWEAR</div><h2 data-value="STREETWEAR" class="decode-text">Streetwear</h2></div>
             <div class="filter-container fade-up" id="streetwear-filters">
                 <button class="filter-btn active" onclick="applyFilter('streetwear', 'all', this)">All</button>
                 <button class="filter-btn" onclick="applyFilter('streetwear', 'oversized', this)">Oversized T-Shirts</button>
                 <button class="filter-btn" onclick="applyFilter('streetwear', 'graphic', this)">Graphic Tees</button>
-                <button class="filter-btn" onclick="applyFilter('streetwear', 'polo', this)">Premium Polos</button>
+                <button class="filter-btn" onclick="applyFilter('streetwear', 'outerwear', this)">Outerwear</button>
                 <button class="filter-btn" onclick="applyFilter('streetwear', 'cargo', this)">Cargo Pants</button>
                 <button class="filter-btn" onclick="applyFilter('streetwear', 'baggy', this)">Baggy Jeans</button>
                 <button class="filter-btn" onclick="applyFilter('streetwear', 'coord', this)">Co-Ord Sets</button>
@@ -483,7 +446,7 @@
         </section>
 
         <section id="premium" class="page-section">
-            <div class="section-header fade-up"><div class="sys-tag">DIR: /PREMIUM_BRANDS</div><h2>Premium</h2></div>
+            <div class="section-header fade-up"><div class="sys-tag">DIR: /PREMIUM_BRANDS</div><h2 data-value="PREMIUM" class="decode-text">Premium</h2></div>
             <div class="filter-container fade-up" id="premium-filters">
                 <button class="filter-btn active" onclick="applyFilter('premium', 'all', this)">All</button>
                 <button class="filter-btn" onclick="applyFilter('premium', 'rl_polo', this)">Ralph Lauren Polos</button>
@@ -495,7 +458,7 @@
         </section>
 
         <section id="youth" class="page-section">
-            <div class="section-header fade-up"><div class="sys-tag">DIR: /YOUTH</div><h2>Youth</h2></div>
+            <div class="section-header fade-up"><div class="sys-tag">DIR: /YOUTH</div><h2 data-value="YOUTH" class="decode-text">Youth</h2></div>
             <div class="filter-container fade-up" id="youth-filters">
                 <button class="filter-btn active" onclick="applyFilter('youth', 'all', this)">All</button>
                 <button class="filter-btn" onclick="applyFilter('youth', 'graphic', this)">Graphic Tees</button>
@@ -510,27 +473,89 @@
     <footer><p>SYS.DEV: USAMA OUTFITTERS // KARACHI // SECURE NETWORK</p></footer>
 
     <script>
-        // --- MASSIVELY EXPANDED INVENTORY (Matching exactly the requested categories) ---
+        // --- CUSTOM CURSOR LOGIC ---
+        const cursorDot = document.getElementById("cursorDot");
+        const cursorRing = document.getElementById("cursorRing");
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ringX = mouseX;
+        let ringY = mouseY;
+
+        // Check if hover is supported to run cursor logic
+        if(window.matchMedia("(hover: hover)").matches) {
+            document.addEventListener("mousemove", (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                cursorDot.style.left = `${mouseX}px`;
+                cursorDot.style.top = `${mouseY}px`;
+            });
+
+            // Smooth lag effect for the ring
+            function renderCursor() {
+                ringX += (mouseX - ringX) * 0.15;
+                ringY += (mouseY - ringY) * 0.15;
+                cursorRing.style.left = `${ringX}px`;
+                cursorRing.style.top = `${ringY}px`;
+                requestAnimationFrame(renderCursor);
+            }
+            requestAnimationFrame(renderCursor);
+
+            // Add hover effects to all clickable elements
+            const clickables = document.querySelectorAll("button, a, .prod-card, .tilt-card, .close-modal");
+            clickables.forEach(el => {
+                el.addEventListener("mouseenter", () => {
+                    cursorRing.style.width = "50px";
+                    cursorRing.style.height = "50px";
+                    cursorRing.style.background = "rgba(224, 255, 0, 0.1)";
+                });
+                el.addEventListener("mouseleave", () => {
+                    cursorRing.style.width = "34px";
+                    cursorRing.style.height = "34px";
+                    cursorRing.style.background = "transparent";
+                });
+            });
+        }
+
+        // --- CYBER-DECODE TEXT EFFECT (The Surprise) ---
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+        function decodeText(element) {
+            let iterations = 0;
+            const originalText = element.dataset.value;
+            
+            clearInterval(element.decodeInterval);
+            
+            element.decodeInterval = setInterval(() => {
+                element.innerText = originalText.split("").map((letter, index) => {
+                    if(index < iterations) return originalText[index];
+                    return letters[Math.floor(Math.random() * letters.length)];
+                }).join("");
+                
+                if(iterations >= originalText.length) clearInterval(element.decodeInterval);
+                iterations += 1 / 3;
+            }, 30);
+        }
+
+        // --- MASSIVELY EXPANDED INVENTORY ---
         const catalog = [
             // STREETWEAR
             { id: 's1', name: 'Acid Wash Boxy Tee', price: 1899, section: 'streetwear', type: 'oversized', img: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80', badge: 'HOT' },
             { id: 's2', name: 'Heavyweight Drop-Shoulder', price: 2100, section: 'streetwear', type: 'oversized', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80' },
             { id: 's3', name: 'Tokyo Drift Graphic Tee', price: 1799, section: 'streetwear', type: 'graphic', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80', badge: 'NEW' },
             { id: 's4', name: 'Vintage Print Tee', price: 1699, section: 'streetwear', type: 'graphic', img: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=600&q=80' },
-            { id: 's5', name: 'Pique Street Polo', price: 2200, section: 'streetwear', type: 'polo', img: 'https://images.unsplash.com/photo-1586363104862-3a5e222ee1eb?auto=format&fit=crop&w=600&q=80' },
-            { id: 's6', name: 'Tactical Cargo Pants', price: 3400, section: 'streetwear', type: 'cargo', img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80', badge: 'ESSENTIAL' },
-            { id: 's7', name: 'Ripstop Wide Cargo', price: 3600, section: 'streetwear', type: 'cargo', img: 'https://images.unsplash.com/photo-1517423568366-8b83523034fd?auto=format&fit=crop&w=600&q=80' },
+            { id: 's11', name: 'Cyberpunk Tech Windbreaker', price: 4500, section: 'streetwear', type: 'outerwear', img: 'https://images.unsplash.com/photo-1555689502-c4b22d76c56f?auto=format&fit=crop&w=600&q=80', badge: 'TECHWEAR' },
+            { id: 's12', name: 'Oversized Utility Vest', price: 3200, section: 'streetwear', type: 'outerwear', img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80' },
+            { id: 's6', name: 'Tactical Cargo Pants', price: 3400, section: 'streetwear', type: 'cargo', img: 'https://images.unsplash.com/photo-1517423568366-8b83523034fd?auto=format&fit=crop&w=600&q=80', badge: 'ESSENTIAL' },
             { id: 's8', name: 'Baggy Y2K Denim', price: 3899, section: 'streetwear', type: 'baggy', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=80', badge: 'TRENDING' },
             { id: 's9', name: 'Relaxed Fit Wash Denim', price: 3500, section: 'streetwear', type: 'baggy', img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=600&q=80' },
-            { id: 's10', name: 'Nylon Co-Ord Track Set', price: 5500, section: 'streetwear', type: 'coord', img: 'https://images.unsplash.com/photo-1555689502-c4b22d76c56f?auto=format&fit=crop&w=600&q=80' },
+            { id: 's10', name: 'Nylon Co-Ord Track Set', price: 5500, section: 'streetwear', type: 'coord', img: 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?auto=format&fit=crop&w=600&q=80' },
 
             // PREMIUM
             { id: 'p1', name: 'Ralph Lauren Classic Fit Polo', price: 6500, section: 'premium', type: 'rl_polo', img: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?auto=format&fit=crop&w=600&q=80', badge: 'RALPH LAUREN' },
             { id: 'p2', name: 'RL Custom Mesh Polo', price: 6800, section: 'premium', type: 'rl_polo', img: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80', badge: 'RALPH LAUREN' },
             { id: 'p3', name: 'Premium Oxford Cotton Shirt', price: 4500, section: 'premium', type: 'luxury_shirt', img: 'https://images.unsplash.com/photo-1598032895397-b9472444bf93?auto=format&fit=crop&w=600&q=80', badge: '100% COTTON' },
             { id: 'p4', name: 'Luxury Silk-Blend Casual', price: 5200, section: 'premium', type: 'luxury_shirt', img: 'https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=600&q=80' },
+            { id: 'p9', name: 'Prada Nylon Jacket (Replica)', price: 12500, section: 'premium', type: 'luxury_shirt', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80', badge: 'PRADA' },
             { id: 'p5', name: "Levi's 501 Selvedge Denim", price: 8500, section: 'premium', type: 'high_denim', img: 'https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80', badge: "LEVI'S" },
-            { id: 'p6', name: 'Italian Stretch Denim', price: 7800, section: 'premium', type: 'high_denim', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=80' },
             { id: 'p7', name: 'Executive Tailored Trousers', price: 6200, section: 'premium', type: 'exec', img: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=600&q=80', badge: 'TAILORED' },
             { id: 'p8', name: 'Smart Casual Chinos', price: 4800, section: 'premium', type: 'exec', img: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80' },
 
@@ -539,8 +564,8 @@
             { id: 'y2', name: 'Street Art Print Tee', price: 1199, section: 'youth', type: 'graphic', img: 'https://images.unsplash.com/photo-1514090288891-b3b0dff171a5?auto=format&fit=crop&w=600&q=80' },
             { id: 'y3', name: 'Essential Youth Hoodie', price: 2499, section: 'youth', type: 'hoodie', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80' },
             { id: 'y4', name: 'Mini Oversize Drop-Tee', price: 1499, section: 'youth', type: 'oversize', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80' },
-            { id: 'y5', name: 'Youth Stretch Denim', price: 1899, section: 'youth', type: 'denim', img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80', badge: 'CORE' },
-            { id: 'y6', name: 'Casual Ripstop Cargo', price: 2199, section: 'youth', type: 'denim', img: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=600&q=80' }
+            { id: 'y7', name: 'Tech Fleece Joggers', price: 2100, section: 'youth', type: 'denim', img: 'https://images.unsplash.com/photo-1532202802379-df93d543bac3?auto=format&fit=crop&w=600&q=80', badge: 'TECH' },
+            { id: 'y5', name: 'Youth Stretch Denim', price: 1899, section: 'youth', type: 'denim', img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80', badge: 'CORE' }
         ];
 
         // Detailed Specs Database for Holographic Modal
@@ -550,6 +575,7 @@
             'polo': { fabric: 'Premium Cotton Pique', fit: 'Athletic / Smart', breathability: '9/10', care: 'Warm wash, tumble dry low', badges: ['Premium Stitching', 'Classic Fit'] },
             'cargo': { fabric: 'Military-Grade Ripstop Blend', fit: 'Baggy / Articulated', breathability: '7/10', care: 'Machine wash warm', badges: ['Durable', 'Utility Pockets'] },
             'baggy': { fabric: '14oz Raw Denim', fit: 'Wide Leg / Y2K', breathability: '6/10', care: 'Wash rarely, inside out', badges: ['Heavyweight', 'Vintage Wash'] },
+            'outerwear': { fabric: 'GORE-TEX / Water Repellent Nylon', fit: 'Layering Fit', breathability: '7/10', care: 'Cold wash only', badges: ['Weather Proof', 'Tech Fabric'] },
             'coord': { fabric: 'Nylon / Spandex Blend', fit: 'Relaxed', breathability: '10/10', care: 'Cold wash only', badges: ['Sport Tech', 'Quick Dry'] },
             'rl_polo': { fabric: '100% Ring-Spun Cotton Mesh', fit: 'Custom Slim Fit', breathability: '9/10', care: 'Machine washable', badges: ['Imported', 'Quality Assured', 'Iconic'] },
             'luxury_shirt': { fabric: 'Egyptian Cotton / Silk Blend', fit: 'Tailored', breathability: '8/10', care: 'Dry clean recommended', badges: ['Luxury Finish', 'Wrinkle Resistant'] },
@@ -568,11 +594,13 @@
             if(!sessionStorage.getItem('introPlayed')) {
                 const intro = document.getElementById('cinematic-intro');
                 setTimeout(() => {
-                    intro.style.opacity = '0';
-                    intro.style.visibility = 'hidden';
-                    sessionStorage.setItem('introPlayed', 'true');
-                    initApp();
-                }, 3500); // 3.5s cinematic intro
+                    intro.classList.add('opening');
+                    setTimeout(() => {
+                        intro.style.display = 'none';
+                        sessionStorage.setItem('introPlayed', 'true');
+                        initApp();
+                    }, 1000);
+                }, 3500); 
             } else {
                 document.getElementById('cinematic-intro').style.display = 'none';
                 const pl = document.getElementById('preloader');
@@ -586,14 +614,9 @@
             if(window.matchMedia("(hover: hover)").matches) setupHero3DTracker();
             setupScrollReveals();
             ['streetwear', 'premium', 'youth'].forEach(sec => renderProducts(sec));
-        }
-
-        // --- CURSOR EFFECTS ---
-        if(window.matchMedia("(hover: hover)").matches) {
-            document.addEventListener('mousemove', (e) => {
-                const glow = document.getElementById('cursor-glow');
-                glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px';
-            });
+            
+            // Trigger decode on visible text immediately
+            document.querySelectorAll('.decode-text').forEach(el => decodeText(el));
         }
 
         // --- SCROLL EFFECTS ---
@@ -608,10 +631,13 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('in-view');
+                        // Decode text surprise
+                        if(entry.target.classList.contains('decode-text')) decodeText(entry.target);
+                        if(entry.target.querySelector('.decode-text')) decodeText(entry.target.querySelector('.decode-text'));
                     }
                 });
             }, { threshold: 0.1 });
-            document.querySelectorAll('.fade-up, .mask-reveal').forEach(el => observer.observe(el));
+            document.querySelectorAll('.fade-up, .mask-reveal, .section-header').forEach(el => observer.observe(el));
         }
 
         // --- 3D HERO MOUSE TRACKING ---
@@ -625,7 +651,6 @@
                 const x = (e.clientX - rect.left) / rect.width - 0.5;
                 const y = (e.clientY - rect.top) / rect.height - 0.5;
                 
-                // Parallax layers
                 scene.style.transform = `rotateY(${x * 15}deg) rotateX(${-y * 15}deg)`;
                 focal.style.transform = `translateZ(100px) translate(${x * -30}px, ${y * -30}px)`;
             });
@@ -647,6 +672,14 @@
             }, 500);
         }
 
+        function warpToArchive() {
+            document.getElementById('scene3D').classList.add('warp-speed');
+            setTimeout(() => {
+                triggerSmoothTransition('streetwear');
+                setTimeout(() => { document.getElementById('scene3D').classList.remove('warp-speed'); }, 500);
+            }, 300);
+        }
+
         function toggleMobileMenu() { document.getElementById('mobileNav').classList.toggle('active'); }
         function mobileNavTransition(pageId) { toggleMobileMenu(); setTimeout(() => triggerSmoothTransition(pageId), 300); }
 
@@ -660,8 +693,7 @@
             });
             activeSection = pageId; window.scrollTo({ top: 0 });
             
-            // Re-trigger scroll animations for the new page
-            document.querySelectorAll(`#${pageId} .fade-up`).forEach(el => {
+            document.querySelectorAll(`#${pageId} .fade-up, #${pageId} .section-header`).forEach(el => {
                 el.classList.remove('in-view');
                 setTimeout(() => el.classList.add('in-view'), 100);
             });
@@ -676,7 +708,6 @@
             
             renderProducts(section);
             
-            // Re-trigger premium burst animation
             const grid = document.getElementById(`${section}Grid`);
             grid.classList.remove('stagger-burst');
             void grid.offsetWidth; // Reflow
@@ -717,20 +748,20 @@
             const p = catalog.find(x => x.id === id);
             if(!p) return;
 
-            // Populate Info
             document.getElementById('modalTitle').innerText = p.name;
+            document.getElementById('modalTitle').dataset.value = p.name; // For decode effect
+            decodeText(document.getElementById('modalTitle'));
+
             document.getElementById('modalPrice').innerText = `PKR ${p.price}`;
             document.getElementById('modalBadge').innerText = p.badge ? `[ ${p.badge} ]` : `[ ${p.section.toUpperCase()} ]`;
             
-            // Populate Images (3 dynamic views)
             document.getElementById('modalGallery').innerHTML = `
                 <img src="${p.img}" class="modal-img mask-reveal" alt="${p.name}">
                 <img src="${p.img}" class="modal-img mask-reveal" alt="${p.name} Detail" style="transition-delay: 0.1s">
                 <img src="${p.img}" class="modal-img mask-reveal" alt="${p.name} Editorial" style="transition-delay: 0.2s">
             `;
 
-            // Populate Specs
-            const specs = itemSpecs[p.type] || itemSpecs['oversized']; // fallback
+            const specs = itemSpecs[p.type] || itemSpecs['oversized']; 
             document.getElementById('modalSpecs').innerHTML = `
                 <div class="spec-item"><span class="spec-label">FABRIC</span><span class="spec-value">${specs.fabric}</span></div>
                 <div class="spec-item"><span class="spec-label">FIT</span><span class="spec-value">${specs.fit}</span></div>
@@ -740,13 +771,9 @@
             
             document.getElementById('modalQualityBadges').innerHTML = specs.badges.map(b => `<span class="quality-badge">${b}</span>`).join('');
 
-            // Add to Cart action
             document.getElementById('modalAddToCart').onclick = () => { addToCart(id); closeModal(); };
-
-            // Open Modal
             document.getElementById('productModal').classList.add('active');
             
-            // Trigger Image Masks
             setTimeout(() => {
                 document.querySelectorAll('#modalGallery .mask-reveal').forEach(el => el.classList.add('in-view'));
             }, 100);
@@ -759,13 +786,11 @@
             document.querySelectorAll('#modalGallery .mask-reveal').forEach(el => el.classList.remove('in-view'));
         }
 
-        // Magnetic Button Interaction (Desktop only)
         function setupMagneticButton() {
             if(!window.matchMedia("(hover: hover)").matches) return;
             const wrap = document.getElementById('magneticWrap');
             const btn = document.getElementById('modalAddToCart');
             
-            // Clean previous listeners by replacing node
             const newWrap = wrap.cloneNode(true);
             wrap.parentNode.replaceChild(newWrap, wrap);
             const newBtn = newWrap.querySelector('.magnetic-btn');
@@ -779,9 +804,16 @@
             newWrap.addEventListener('mouseleave', () => {
                 newBtn.style.transform = `translate(0px, 0px)`;
             });
-            
-            // Re-attach onclick
             newBtn.onclick = document.getElementById('modalAddToCart').onclick;
+            
+            // Re-apply custom cursor hover
+            const cRing = document.getElementById('cursorRing');
+            newWrap.addEventListener("mouseenter", () => {
+                cRing.style.width = "50px"; cRing.style.height = "50px"; cRing.style.background = "rgba(224, 255, 0, 0.1)";
+            });
+            newWrap.addEventListener("mouseleave", () => {
+                cRing.style.width = "34px"; cRing.style.height = "34px"; cRing.style.background = "transparent";
+            });
         }
 
         // --- CART SYSTEM ---
