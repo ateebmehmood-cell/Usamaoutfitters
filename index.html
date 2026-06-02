@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USAMA OUTFITTERS | Engineered Luxury Streetwear</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Inter:wght@300;400;500;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <title>Usama Outfitters | Engineered Streetwear</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Inter:wght@300;400;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -17,86 +17,47 @@
             --font-body: 'Inter', sans-serif;
             --font-tech: 'Space Mono', monospace;
             --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            --glass-bg: rgba(10, 10, 10, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --easing-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; cursor: none; }
-        body {
-            font-family: var(--font-body); background-color: var(--black);
-            color: var(--text-primary); overflow-x: hidden;
-            -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: var(--font-body); background-color: var(--black); 
+            color: var(--white); overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased; 
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* ===== CUSTOM HOLOGRAPHIC CURSOR ===== */
-        .cursor-dot {
-            width: 6px; height: 6px; background-color: var(--neon);
-            position: fixed; border-radius: 50%; pointer-events: none;
-            z-index: 999999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s;
+        /* ===== PREMIUM AMBIENT EFFECTS ===== */
+        #cursor-glow {
+            position: fixed; top: 0; left: 0; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(224, 255, 0, 0.05) 0%, transparent 60%);
+            transform: translate(-50%, -50%); pointer-events: none; z-index: 1; 
+            mix-blend-mode: screen; transition: width 0.4s, height 0.4s;
         }
-        .cursor-ring {
-            width: 34px; height: 34px; border: 1px solid rgba(224, 255, 0, 0.5);
-            position: fixed; border-radius: 50%; pointer-events: none;
-            z-index: 999998; transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
-            transition-timing-function: ease-out;
-        }
-        
-        @media (hover: none) and (pointer: coarse) {
-            html { cursor: auto; }
-            .cursor-dot, .cursor-ring { display: none !important; }
-        }
+        @media (max-width: 768px) { #cursor-glow { display: none; } }
 
-        /* ===== AMBIENT GRADIENTS & PARTICLES ===== */
-        .ambient-mesh {
-            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: 
-                radial-gradient(circle at 50% 50%, rgba(224, 255, 0, 0.04), transparent 60%),
-                radial-gradient(circle at 80% 20%, rgba(0, 150, 255, 0.03), transparent 50%),
-                radial-gradient(circle at 20% 80%, rgba(255, 0, 150, 0.03), transparent 50%);
-            z-index: 0; pointer-events: none; animation: meshRotate 40s linear infinite;
+        .ambient-particles {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 0; opacity: 0.3;
+            background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 80px 80px; animation: particleDrift 40s linear infinite;
         }
-        @keyframes meshRotate { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
-
-        .floating-particles {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
-            background-size: 60px 60px; z-index: 0; pointer-events: none;
-            animation: particleFloat 60s linear infinite; opacity: 0.4;
-        }
-        @keyframes particleFloat { 0% { background-position: 0 0; } 100% { background-position: 1000px 1000px; } }
+        @keyframes particleDrift { 0% { background-position: 0 0; } 100% { background-position: 1000px 1000px; } }
 
         /* ===== SMOOTH PAGE TRANSITIONS ===== */
-        main { position: relative; z-index: 10; transition: opacity 0.4s ease, filter 0.4s ease, transform 0.5s var(--easing-smooth); }
+        main { position: relative; z-index: 10; transition: opacity 0.4s ease, filter 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
         main.page-transitioning { opacity: 0; filter: blur(10px); transform: scale(0.98); }
 
-        /* ===== CINEMATIC INTRO ===== */
-        #cinematic-intro {
-            position: fixed; inset: 0; z-index: 100000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            pointer-events: none;
+        /* ===== PRELOADER ===== */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: var(--black); z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.8s, filter 0.8s;
         }
-        .shutter { position: absolute; left: 0; width: 100%; height: 50vh; background: #030303; transition: transform 1s var(--easing-smooth); z-index: 100001; border-top: 1px solid var(--neon); border-bottom: 1px solid var(--neon);}
-        .shutter-top { top: 0; transform-origin: top; }
-        .shutter-bottom { bottom: 0; transform-origin: bottom; }
-        
-        .intro-brand-wrapper { z-index: 100002; text-align: center; }
-        .intro-brand {
-            font-family: var(--font-display); font-size: clamp(2rem, 6vw, 5rem); font-weight: 800; letter-spacing: 0.5em; text-transform: uppercase;
-            color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2); position: relative; overflow: hidden;
-        }
-        .intro-brand::before {
-            content: 'USAMA'; position: absolute; left: 0; top: 0; width: 0%; height: 100%;
-            color: var(--white); -webkit-text-stroke: 0px; overflow: hidden; border-right: 2px solid var(--neon);
-            animation: typeReveal 1s var(--easing-smooth) 0.5s forwards, pulseGlow 2s infinite;
-        }
-        .intro-subtitle { font-family: var(--font-tech); font-size: 10px; color: var(--text-gray); margin-top: 20px; letter-spacing: 4px; opacity: 0; animation: fadeUp 0.8s var(--easing-smooth) 1.2s forwards; }
-        
-        #cinematic-intro.opening .shutter-top { transform: translateY(-100%); }
-        #cinematic-intro.opening .shutter-bottom { transform: translateY(100%); }
-        #cinematic-intro.opening .intro-brand-wrapper { opacity: 0; transition: 0.5s; filter: blur(10px); }
+        .sys-boot { font-family: var(--font-tech); font-size: 12px; color: var(--text-gray); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        .logo-reveal { font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 3rem); font-weight: 800; letter-spacing: 5px; color: var(--white); overflow: hidden; text-align: center;}
+        .logo-reveal span { display: inline-block; transform: translateY(100%); animation: slideUpReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s; }
 
         /* ===== SYSTEM TRANSITIONS ===== */
         #cyber-transition {
@@ -107,28 +68,32 @@
         #cyber-transition.active { left: 0; }
         #cyber-transition.done { left: 100%; }
 
+        /* ===== ANIMATIONS ===== */
+        @keyframes slideUpReveal { to { transform: translateY(0); } }
+        @keyframes gridPan { 0% { transform: translateY(0); } 100% { transform: translateY(50px); } }
+        .warp-speed { animation: warpDrive 0.6s cubic-bezier(0.8, 0, 0.2, 1) forwards; }
+        @keyframes warpDrive { 0% { transform: scale(1) translateZ(0); filter: blur(0); opacity: 1; } 100% { transform: scale(3) translateZ(500px); filter: blur(15px); opacity: 0; } }
         @keyframes premiumReveal { 0% { opacity: 0; transform: translateY(30px) scale(0.95); filter: blur(5px); } 100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
-        .stagger-burst .tilt-card { opacity: 0; animation: premiumReveal 0.6s var(--easing-smooth) forwards; }
-        .reveal-up { opacity: 0; transform: translateY(40px); filter: blur(3px); transition: all 0.8s var(--easing-smooth); }
+        .stagger-burst .tilt-card { opacity: 0; animation: premiumReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .reveal-up { opacity: 0; transform: translateY(40px); filter: blur(3px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal-up.in-view { opacity: 1; transform: translateY(0); filter: blur(0); }
 
-        /* ===== HEADER & MENU ===== */
+        /* ===== HEADER & MOBILE MENU ===== */
         header { 
-            position: fixed; top: 0; left: 0; width: 100%; padding: 25px 5%; z-index: 1000; 
+            position: fixed; top: 0; left: 0; width: 100%; padding: 20px 5%; z-index: 1000; 
             display: flex; justify-content: space-between; align-items: center; 
-            transition: all 0.5s var(--easing-smooth); background: transparent; 
+            transition: var(--transition); background: transparent; 
         }
-        header.scrolled { background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(20px); padding: 15px 5%; border-bottom: 1px solid var(--glass-border); }
-        .brand-logo { font-family: var(--font-display); font-size: clamp(14px, 3.5vw, 20px); font-weight: 800; color: var(--white); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; z-index: 1002; white-space: nowrap;}
+        header.scrolled { background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(20px); padding: 15px 5%; border-bottom: 1px solid rgba(255,255,255,0.05); }
         
-        .nav-links { display: none; gap: 35px; }
+        .brand { font-family: var(--font-display); font-size: clamp(14px, 3.5vw, 20px); font-weight: 800; color: var(--white); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; z-index: 1002; white-space: nowrap;}
+        
+        .nav-links { display: none; gap: 30px; }
         @media (min-width: 900px) { .nav-links { display: flex; } }
-        .nav-links button { background: none; border: none; color: var(--text-gray); font-family: var(--font-tech); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; transition: color 0.3s; cursor: pointer; position: relative; padding: 5px 0; }
-        .nav-links button::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--neon); transition: width 0.3s ease; }
-        .nav-links button:hover::after, .nav-links button.active::after { width: 100%; }
-        .nav-links button:hover, .nav-links button.active { color: var(--white); }
+        .nav-links button { background: none; border: none; color: var(--text-gray); font-family: var(--font-tech); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; cursor: pointer; }
+        .nav-links button:hover, .nav-links button.active { color: var(--neon); text-shadow: 0 0 10px rgba(224,255,0,0.4); }
         
-        .header-actions { display: flex; gap: 20px; align-items: center; z-index: 1002;}
+        .header-actions { display: flex; gap: 15px; align-items: center; z-index: 1002;}
         .cart-btn { background: none; border: none; color: var(--white); font-family: var(--font-tech); font-size: 11px; display: flex; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer;}
         .cart-btn:hover { color: var(--neon); }
         .cart-badge { background: var(--neon); color: var(--black); width: 22px; height: 22px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; }
@@ -139,42 +104,34 @@
         .mobile-nav {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(5,5,5,0.98);
             backdrop-filter: blur(15px); z-index: 1001; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 30px; opacity: 0; visibility: hidden; transition: 0.4s;
+            align-items: center; justify-content: center; gap: 30px; opacity: 0; visibility: hidden; transition: var(--transition);
         }
         .mobile-nav.active { opacity: 1; visibility: visible; }
-        .mobile-nav button { background: none; border: none; color: var(--white); font-family: var(--font-display); font-size: 2rem; text-transform: uppercase; font-weight: 800; cursor: pointer; transform: translateY(20px); opacity: 0; transition: 0.4s; }
+        .mobile-nav button { background: none; border: none; color: var(--white); font-family: var(--font-display); font-size: 2rem; text-transform: uppercase; font-weight: 800; cursor: pointer; transform: translateY(20px); opacity: 0; transition: var(--transition); }
         .mobile-nav.active button { transform: translateY(0); opacity: 1; }
 
-        /* ===== HERO SECTION ===== */
+        /* ===== ENGINEERED 3D HERO ===== */
         .hero-wrapper { perspective: 2000px; height: 100vh; overflow: hidden; background: radial-gradient(circle at center, #111 0%, #000 100%); }
         .hero { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; transition: transform 0.15s ease-out; }
         .hero-grid { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 60px 60px; transform: rotateX(70deg) translateZ(-200px); animation: gridPan 4s linear infinite; pointer-events: none; }
         
-        .hero-focal-text { position: absolute; z-index: 5; text-align: center; pointer-events: none; transform-style: preserve-3d; transform: translateZ(100px); width: 100%; }
-        .hero-focal-text h1 {
-            font-family: var(--font-display); font-size: clamp(2.5rem, 8vw, 8rem); font-weight: 800; line-height: 0.9; text-transform: uppercase;
-            color: var(--white); position: relative; text-shadow: 0 0 100px rgba(224, 255, 0, 0.2); animation: textBreathe 4s infinite alternate;
-        }
-        @keyframes textBreathe { 0% { transform: scale(1); text-shadow: 0 0 80px rgba(224, 255, 0, 0.1); } 100% { transform: scale(1.02); text-shadow: 0 0 120px rgba(224, 255, 0, 0.3); } }
-
-        .hero-glow {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(224,255,0,0.12) 0%, transparent 60%);
-            filter: blur(80px); z-index: 4; pointer-events: none;
-        }
-
-        .hero-3d-scene { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.1s ease-out; z-index: 6; pointer-events: none;}
-        .hero-img-panel { position: absolute; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.8); border: 1px solid var(--glass-border); transform-style: preserve-3d; background: var(--bg-surface); }
-        .hero-img-panel img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(30%) contrast(1.1); }
-        .hero-img-panel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); }
+        .hero-title-3d { position: absolute; text-align: center; transform-style: preserve-3d; transform: translateZ(120px); pointer-events: none; width: 100%;}
+        .hero-title-3d h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 8vw, 8rem); font-weight: 800; line-height: 0.9; text-transform: uppercase; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.9); position: relative; }
+        .hero-title-3d h1::before { content: 'USAMA OUTFITTERS'; position: absolute; left: 0; top: 0; width: 100%; color: var(--white); -webkit-text-stroke: 0px; transform: translateZ(-40px); opacity: 0.4; filter: blur(8px); }
         
-        .panel-1 { width: clamp(150px, 25vw, 300px); height: clamp(220px, 35vw, 420px); top: 12%; left: 5%; transform: translateZ(80px) rotateY(15deg) rotateX(5deg); }
-        .panel-2 { width: clamp(180px, 28vw, 340px); height: clamp(250px, 40vw, 460px); bottom: 15%; right: 5%; transform: translateZ(180px) rotateY(-15deg) rotateX(-5deg); }
-        .panel-3 { width: clamp(140px, 16vw, 240px); height: clamp(200px, 24vw, 340px); top: 20%; right: 22%; transform: translateZ(100px) rotateY(-10deg); opacity: 0.6; filter: blur(3px);}
-        @media (max-width: 768px) { .panel-1, .panel-2 { opacity: 0.4; } .panel-3 { display: none; } }
+        .tech-badge { font-family: var(--font-tech); font-size: 10px; color: var(--neon); letter-spacing: 4px; display: inline-block; margin-bottom: 20px; border: 1px solid rgba(224,255,0,0.5); padding: 8px 20px; transform: translateZ(180px); background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
+        
+        .float-panel { position: absolute; border: 1px solid rgba(255,255,255,0.1); background: rgba(10,10,10,0.6); backdrop-filter: blur(15px); padding: 10px; transform-style: preserve-3d; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .float-panel img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(50%) contrast(1.1); transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .float-panel:hover img { filter: grayscale(0%) contrast(1.2); }
+        .p1 { width: clamp(150px, 25vw, 300px); height: clamp(220px, 35vw, 420px); top: 12%; left: 5%; transform: translateZ(80px) rotateY(15deg) rotateX(5deg); }
+        .p2 { width: clamp(180px, 28vw, 340px); height: clamp(250px, 40vw, 460px); bottom: 15%; right: 5%; transform: translateZ(180px) rotateY(-15deg) rotateX(-5deg); }
+        @media (max-width: 768px) { .p1, .p2 { opacity: 0.5; } }
         
         .explore-btn { position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%) translateZ(220px); background: var(--white); color: var(--black); font-family: var(--font-tech); padding: 16px 45px; font-size: 12px; font-weight: 700; border: none; text-transform: uppercase; transition: all 0.4s; box-shadow: 0 10px 30px rgba(255,255,255,0.15); border-radius: 2px; cursor: pointer; overflow: hidden;}
-        .explore-btn:hover { background: var(--neon); box-shadow: 0 15px 40px rgba(224, 255, 0, 0.4); transform: translateX(-50%) translateZ(240px) scale(1.05); }
+        .explore-btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,0,0,0.2), transparent); transform: skewX(-25deg); transition: 0s; z-index: 10; pointer-events: none; }
+        .explore-btn:hover::after { left: 200%; transition: 0.7s ease-in-out; }
+        .explore-btn:hover { background: var(--neon); box-shadow: 0 15px 40px rgba(224, 255, 0, 0.5); transform: translateX(-50%) translateZ(240px) scale(1.05); }
 
         /* ===== SCROLL 3D OFFERS VAULT ===== */
         .offers-vault { padding: 120px 5%; max-width: 1600px; margin: 0 auto; perspective: 1500px; }
@@ -188,17 +145,20 @@
             transform-style: preserve-3d; cursor: pointer; transition: transform 0.15s ease-out, border-color 0.4s;
             opacity: 0; transform: perspective(1000px) rotateX(-20deg) translateY(60px);
         }
-        .vault-card.in-view { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0); transition: opacity 0.8s, transform 0.8s var(--easing-smooth); }
+        .vault-card.in-view { opacity: 1; transform: perspective(1000px) rotateX(0deg) translateY(0); transition: opacity 0.8s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .vault-card::after { content: ''; position: absolute; inset: -1px; z-index: -1; background: linear-gradient(45deg, transparent, var(--neon), transparent); opacity: 0; transition: opacity 0.5s; filter: blur(5px); }
+        .vault-card:hover::after { opacity: 0.5; }
         .vault-card:hover { border-color: rgba(255,255,255,0.2); }
 
         .vault-card img { width: 100%; height: 300px; object-fit: cover; margin-bottom: 25px; filter: contrast(1.1) grayscale(20%); transition: 0.5s; transform: translateZ(40px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
         .vault-card:hover img { filter: contrast(1.1) grayscale(0%); transform: translateZ(60px) scale(1.05); }
-        .vault-card h3 { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; margin-bottom: 12px; transform: translateZ(30px); }
+        .vault-card h3 { font-family: var(--font-display); font-size: 1.8rem; text-transform: uppercase; margin-bottom: 12px; transform: translateZ(30px); transition: color 0.3s;}
+        .vault-card:hover h3 { color: var(--neon); }
         .vault-card p { font-family: var(--font-tech); font-size: 12px; color: var(--text-gray); margin-bottom: 25px; transform: translateZ(20px);}
         .vault-card button { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--white); padding: 12px 35px; font-family: var(--font-tech); font-size: 11px; transform: translateZ(30px); transition: 0.4s; cursor: pointer;}
         .vault-card:hover button { background: var(--white); color: var(--black); }
 
-        /* ===== PAGES & FILTERS ===== */
+        /* ===== PAGES / FOLDERS / PRODUCTS ===== */
         .page-section { display: none; padding-top: 100px; min-height: 100vh;}
         .page-section.active { display: block; }
         #home.active { padding-top: 0; }
@@ -208,17 +168,18 @@
         .sys-info { font-family: var(--font-tech); font-size: 11px; color: var(--text-gray); position: absolute; top: 30px; left: 5%; }
         @media (max-width: 768px) { .sys-info { position: static; margin-bottom: 10px;} }
 
-        .tech-filters { display: flex; gap: 10px; margin-bottom: 40px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-left: 5%; }
+        /* Mobile safe filters */
+        .tech-filters { display: flex; gap: 10px; margin-bottom: 40px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .tech-filters::-webkit-scrollbar { display: none; }
         .t-filter { background: rgba(255,255,255,0.03); border: 1px solid transparent; color: var(--text-gray); font-family: var(--font-tech); font-size: 10px; padding: 8px 18px; cursor: pointer; transition: all 0.4s; text-transform: uppercase; border-radius: 2px; white-space: nowrap;}
         .t-filter.active, .t-filter:hover { border-color: var(--neon); color: var(--white); background: rgba(224,255,0,0.05); box-shadow: 0 0 15px rgba(224, 255, 0, 0.15); transform: translateY(-2px);}
 
-        /* ===== PRODUCT CARDS ===== */
+        /* ===== ADVANCED 3D CARDS (Mobile Safe) ===== */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 0 5% 100px; perspective: 1200px;}
         @media (min-width: 768px) { .product-grid { gap: 40px; } }
         
         .tilt-card { 
-            position: relative; background: #0a0a0a; transform-style: preserve-3d; cursor: pointer; 
+            position: relative; background: var(--black); transform-style: preserve-3d; cursor: pointer; 
             border: 1px solid rgba(255,255,255,0.05); overflow: hidden; border-radius: 4px;
             transition: border-color 0.4s, transform 0.15s ease-out;
         }
@@ -226,18 +187,18 @@
         
         .card-img-wrapper { width: 100%; height: 350px; overflow: hidden; position: relative; transform: translateZ(20px); background: #111;}
         @media (max-width: 768px) { .card-img-wrapper { height: 280px; } }
-        .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.8s var(--easing-smooth), filter 0.8s; }
+        .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s; }
         @media(hover: hover) { .tilt-card:hover .card-img-wrapper img { transform: scale(1.08); filter: contrast(1.1); } }
         
         .sys-badge { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.8); border: 1px solid var(--neon); color: var(--neon); padding: 4px 10px; font-family: var(--font-tech); font-size: 9px; text-transform: uppercase; z-index: 6; transform: translateZ(40px); backdrop-filter: blur(5px); }
         
-        .card-info { padding: 15px; border-top: 1px solid rgba(255,255,255,0.03); transform: translateZ(10px); background: #050505;}
+        .card-info { padding: 15px; border-top: 1px solid rgba(255,255,255,0.03); transform: translateZ(10px); background: var(--black);}
         .card-title { font-family: var(--font-display); font-size: 13px; text-transform: uppercase; margin-bottom: 5px; color: var(--white); letter-spacing: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .card-meta { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;}
         .card-category { font-family: var(--font-tech); font-size: 9px; color: var(--text-gray); text-transform: uppercase; }
-        .card-price { font-family: var(--font-tech); font-size: 12px; color: var(--neon); font-weight: 700; }
+        .card-price { font-family: var(--font-tech); font-size: 11px; color: var(--neon); font-weight: 700; }
 
-        /* ===== HOLOGRAPHIC PRODUCT MODAL ===== */
+        /* ===== THE MAGICAL PRODUCT MODAL ===== */
         .product-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             background: rgba(5,5,5,0.98); backdrop-filter: blur(25px);
@@ -246,19 +207,20 @@
         }
         .product-modal.active { opacity: 1; visibility: visible; }
 
+        /* Holographic Scan Line */
         .holo-scan {
             position: absolute; top: -10%; left: 0; width: 100%; height: 4px;
             background: var(--neon); box-shadow: 0 0 20px var(--neon), 0 0 40px var(--neon);
             z-index: 10000; opacity: 0; pointer-events: none;
         }
-        .product-modal.active .holo-scan { animation: scanLine 1.5s var(--easing-smooth) forwards; }
+        .product-modal.active .holo-scan { animation: scanLine 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes scanLine { 0% { top: -10%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 110%; opacity: 0; } }
 
         .modal-content {
-            width: 95%; max-width: 1200px; height: 85vh; background: #050505;
+            width: 95%; max-width: 1200px; height: 85vh; background: var(--black);
             border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: row;
             overflow: hidden; position: relative; opacity: 0; transform: scale(0.95);
-            transition: all 0.6s var(--easing-smooth) 0.2s; border-radius: 8px;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s; border-radius: 8px;
             box-shadow: 0 30px 60px rgba(0,0,0,0.8);
         }
         @media (max-width: 900px) { .modal-content { flex-direction: column; height: 90vh; overflow-y: auto; } }
@@ -271,6 +233,7 @@
         }
         .close-modal:hover { background: var(--neon); color: var(--black); transform: rotate(90deg); }
 
+        /* 3 Image Layout */
         .modal-gallery {
             flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
             gap: 5px; background: #111; padding: 5px;
@@ -280,39 +243,30 @@
         .modal-img { width: 100%; height: 100%; object-fit: cover; position: relative; }
         @media (max-width: 900px) { .modal-img { flex: 0 0 100%; scroll-snap-align: start; } }
         
-        .modal-img:nth-child(1) { grid-column: 1 / 2; grid-row: 1 / 3; } 
-        .modal-img:nth-child(2) { object-position: 50% 20%; transform: scale(1.2); } 
-        .modal-img:nth-child(3) { filter: grayscale(50%) contrast(1.2); } 
+        .modal-img:nth-child(1) { grid-column: 1 / 2; grid-row: 1 / 3; } /* Main Full Image */
+        .modal-img:nth-child(2) { object-position: 50% 20%; transform: scale(1.2); } /* Fabric Zoom Simulation */
+        .modal-img:nth-child(3) { filter: grayscale(50%) contrast(1.2); } /* Lookbook Simulation */
 
         .modal-info {
-            width: 420px; padding: 40px 30px; display: flex; flex-direction: column; 
-            background: var(--grey); overflow-y: auto;
+            width: 400px; padding: 50px 40px; display: flex; flex-direction: column; justify-content: center;
+            background: var(--grey);
         }
-        @media (max-width: 900px) { .modal-info { width: 100%; padding: 30px 20px; flex: none; } }
+        @media (max-width: 900px) { .modal-info { width: 100%; padding: 30px 20px; flex: 1; } }
 
         .m-badge { font-family: var(--font-tech); font-size: 10px; color: var(--neon); letter-spacing: 2px; margin-bottom: 15px; display: block; }
-        .m-title { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.2rem); text-transform: uppercase; margin-bottom: 5px; line-height: 1.1; }
-        .m-price { font-family: var(--font-tech); font-size: 18px; color: var(--white); margin-bottom: 25px; font-weight: 700;}
+        .m-title { font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.5rem); text-transform: uppercase; margin-bottom: 10px; line-height: 1.1; }
+        .m-price { font-family: var(--font-tech); font-size: 18px; color: var(--white); margin-bottom: 30px; font-weight: 700;}
         
-        /* Premium Spec Sheets */
-        .specs-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 25px; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 0;}
-        .spec-item { display: flex; justify-content: space-between; font-size: 11px; font-family: var(--font-tech); text-transform: uppercase;}
-        .spec-label { color: var(--text-gray); }
-        .spec-value { color: var(--white); font-weight: 700; text-align: right;}
-        
-        .m-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 25px;}
-        .quality-badge { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 4px 8px; font-size: 9px; font-family: var(--font-tech); text-transform: uppercase; border-radius: 2px; color: #ccc;}
+        .m-desc-title { font-family: var(--font-tech); font-size: 10px; color: var(--text-gray); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+        .m-desc { font-size: 13px; color: #ccc; margin-bottom: 40px; line-height: 1.8; }
 
-        .auth-box { display: flex; align-items: center; gap: 10px; padding: 12px; background: rgba(224, 255, 0, 0.05); border: 1px solid rgba(224, 255, 0, 0.2); margin-bottom: 25px; border-radius: 4px; }
-        .auth-box i { color: var(--neon); font-size: 16px; }
-        .auth-box span { font-family: var(--font-tech); font-size: 9px; color: var(--white); text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.3;}
-
-        .magnetic-wrap { display: inline-block; padding: 20px; margin: -20px; margin-top: auto;}
+        /* The Magnetic Button */
+        .magnetic-wrap { display: inline-block; padding: 20px; margin: -20px; /* Expands hover area */ }
         .magnetic-btn {
             background: var(--white); color: var(--black); font-family: var(--font-tech); font-size: 12px;
             font-weight: 700; text-transform: uppercase; padding: 18px 30px; border: none; width: 100%;
             cursor: pointer; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
-            position: relative; overflow: hidden; border-radius: 2px; box-shadow: 0 10px 20px rgba(255,255,255,0.1);
+            position: relative; overflow: hidden; border-radius: 2px;
         }
         .magnetic-btn:hover { background: var(--neon); }
 
@@ -320,9 +274,9 @@
         .wa-float { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background-color: var(--wa-green); color: #FFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4); z-index: 9000; text-decoration: none; transition: var(--transition); border: 2px solid rgba(255,255,255,0.1); }
         .wa-float:hover { transform: scale(1.1) rotate(10deg); background-color: #1EBE5D; box-shadow: 0 15px 40px rgba(37, 211, 102, 0.6); }
         
-        .cart-sidebar { position: fixed; top: 0; right: -500px; width: 100%; max-width: 420px; height: 100vh; background: rgba(5,5,5,0.98); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05); z-index: 2001; transition: right 0.6s var(--easing-smooth); display: flex; flex-direction: column; padding: 30px; }
-        .cart-sidebar open { right: 0; }
-        .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition); backdrop-filter: blur(8px); }
+        .cart-sidebar { position: fixed; top: 0; right: -500px; width: 100%; max-width: 400px; height: 100vh; background: rgba(5,5,5,0.98); backdrop-filter: blur(20px); border-left: 1px solid rgba(255,255,255,0.05); z-index: 2001; transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; padding: 30px; }
+        .cart-sidebar.open { right: 0; }
+        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; opacity: 0; visibility: hidden; transition: var(--transition); backdrop-filter: blur(8px); }
         .cart-overlay.open { opacity: 1; visibility: visible; }
         
         .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05);}
@@ -330,8 +284,11 @@
         .close-cart { background: none; border: none; color: var(--white); font-size: 28px; transition: 0.4s; cursor: pointer;}
         .close-cart:hover { color: var(--neon); transform: rotate(90deg); }
         
-        .cart-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;}
-        .cart-item { display: flex; gap: 15px; align-items: center; border: 1px solid rgba(255,255,255,0.03); padding: 10px; background: rgba(255,255,255,0.02); border-radius: 4px;}
+        .cart-items { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-right: 10px; }
+        .cart-items::-webkit-scrollbar { width: 3px; }
+        .cart-items::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px;}
+        
+        .cart-item { display: flex; gap: 15px; align-items: center; border: 1px solid rgba(255,255,255,0.03); padding: 10px; background: rgba(255,255,255,0.01); border-radius: 4px; transition: 0.3s;}
         .cart-item img { width: 65px; height: 85px; object-fit: cover; border-radius: 2px;}
         .cart-item-details { flex: 1; }
         .cart-item-title { font-family: var(--font-display); font-size: 11px; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; }
@@ -340,7 +297,7 @@
         
         .cart-footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
         .cart-total { display: flex; justify-content: space-between; font-family: var(--font-tech); font-size: 14px; margin-bottom: 20px; }
-        .checkout-btn { width: 100%; padding: 18px; background: var(--white); color: var(--black); font-family: var(--font-tech); border: none; font-weight: 700; text-transform: uppercase; transition: 0.4s; cursor: pointer;}
+        .checkout-btn { width: 100%; padding: 15px; background: var(--white); color: var(--black); font-family: var(--font-tech); border: none; font-weight: 700; text-transform: uppercase; transition: 0.4s; cursor: pointer;}
         .checkout-btn:hover { background: var(--neon); box-shadow: 0 10px 30px rgba(224, 255, 0, 0.3);}
         
         footer { padding: 40px 5%; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; color: var(--text-gray); font-family: var(--font-tech); font-size: 10px; text-transform: uppercase; letter-spacing: 2px;}
@@ -348,23 +305,11 @@
 </head>
 <body>
 
-    <div class="cursor-dot" id="cursorDot"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
-    <div class="ambient-mesh"></div>
-    <div class="floating-particles"></div>
     <div id="cursor-glow"></div>
+    <div class="ambient-particles"></div>
 
-    <div id="cinematic-intro">
-        <div class="shutter shutter-top"></div>
-        <div class="shutter shutter-bottom"></div>
-        <div class="intro-brand-wrapper">
-            <div class="intro-brand">USAMA</div>
-            <div class="intro-subtitle">ENGINEERED STREETWEAR</div>
-        </div>
-    </div>
-
-    <div id="preloader" style="display: none;">
-        <div class="sys-boot">Re-routing Data Arrays...</div>
+    <div id="preloader">
+        <div class="sys-boot">Initializing Core Engines...</div>
         <h1 class="logo-reveal"><span>USAMA</span></h1>
     </div>
 
@@ -374,18 +319,15 @@
         <div class="holo-scan"></div>
         <div class="modal-content" id="modalContent">
             <button class="close-modal" onclick="closeModal()">×</button>
-            <div class="modal-gallery" id="modalGallery"></div>
-            <div class="modal-info">
-                <span class="m-badge" id="modalBadge">[ RE-ENGINEERED DROP ]</span>
-                <h2 class="m-title" id="modalTitle">Loading Core Archive...</h2>
-                <div class="m-price" id="modalPrice">PKR 0</div>
-                
-                <div class="specs-grid" id="modalSpecs"></div>
-                <div class="auth-box">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>100% FABRIC QUALITY ASSURED // TRIPLE STITCHED SECURITY // KARACHI CORE</span>
+            <div class="modal-gallery" id="modalGallery">
                 </div>
-                <div class="m-badges" id="modalQualityBadges"></div>
+            <div class="modal-info">
+                <span class="m-badge" id="modalBadge">[ NEW DROP ]</span>
+                <h2 class="m-title" id="modalTitle">Acid Wash Tee</h2>
+                <div class="m-price" id="modalPrice">PKR 1899</div>
+                
+                <div class="m-desc-title">Engineered Quality</div>
+                <p class="m-desc" id="modalDesc">Constructed with 100% heavyweight 240gsm French Terry Cotton for an ultra-premium drape. Garment-dyed and enzyme washed for a vintage feel that ages perfectly over time.</p>
                 
                 <div class="magnetic-wrap" id="magneticWrap">
                     <button class="magnetic-btn" id="modalAddToCart">ADD TO SYSTEM BAG</button>
@@ -394,14 +336,14 @@
         </div>
     </div>
 
-    <a href="https://wa.me/923001234567?text=Hello%20Usama%20Outfitters!%20Accessing%20Core%20Network." class="wa-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+    <a href="https://wa.me/923001234567?text=Hello%20Usama%20Outfitters!" class="wa-float" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
 
     <header id="header">
-        <a class="brand-logo" onclick="triggerSmoothTransition('home')">USAMA OUTFITTERS</a>
+        <a class="brand" onclick="triggerSmoothTransition('home')">USAMA OUTFITTERS</a>
         <nav class="nav-links">
             <button onclick="triggerSmoothTransition('home')" class="active">ARCHIVE</button>
             <button onclick="triggerSmoothTransition('streetwear')">STREETWEAR</button>
-            <button onclick="triggerSmoothTransition('premium')">PREMIUM BRANDS</button>
+            <button onclick="triggerSmoothTransition('premium')">PREMIUM</button>
             <button onclick="triggerSmoothTransition('youth')">YOUTH</button>
         </nav>
         <div class="header-actions">
@@ -420,10 +362,10 @@
     <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header"><h2>SYSTEM_BAG</h2><button class="close-cart" onclick="toggleCart()">×</button></div>
-        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-items" id="cartItems"><p style="color:var(--text-gray); font-family:var(--font-tech); font-size:11px;">[ NO ITEMS DETECTED ]</p></div>
         <div class="cart-footer">
-            <div class="cart-total"><span>TOTAL ARRAY:</span><span id="cartTotalText">PKR 0</span></div>
-            <button class="checkout-btn" onclick="checkoutWhatsApp()">SECURE WA CHECKOUT</button>
+            <div class="cart-total"><span>TOTAL:</span><span id="cartTotalText">PKR 0</span></div>
+            <button class="checkout-btn" onclick="checkoutWhatsApp()">SECURE CHECKOUT</button>
         </div>
     </div>
 
@@ -433,254 +375,173 @@
                 <div class="hero" id="heroScene">
                     <div class="hero-grid"></div>
                     <div id="scene3D" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; transition: transform 0.1s ease-out;">
-                        <div class="tech-badge">[ VER 3.06 // LOCAL SECURITY CORE ]</div>
-                        <div class="hero-img-panel panel-1"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Core Lookbook Front"></div>
-                        <div class="hero-img-panel panel-2"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80" alt="Core Street Edit"></div>
-                        <div class="hero-img-panel panel-3"><img src="https://images.unsplash.com/photo-1520975954732-57dd22299614?auto=format&fit=crop&w=600&q=80" alt="Core Premium Fragment"></div>
-                        <div class="hero-focal-text"><h1 data-value="USAMA" class="decode-text">USAMA</h1></div>
+                        <div class="tech-badge">[ SYS.VER 3.0 / KARACHI ]</div>
+                        <div class="float-panel p1"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Model"></div>
+                        <div class="float-panel p2"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80" alt="Model"></div>
+                        <div class="hero-title-3d"><h1>USAMA</h1></div>
                         <button class="explore-btn" onclick="warpToArchive()">ACCESS ARCHIVE // </button>
                     </div>
                 </div>
             </div>
 
             <div class="offers-vault">
-                <div class="vault-header reveal-up">[ SCRAPE DATA NODES: LIVE DROPS ]</div>
+                <div class="vault-header reveal-up">[ INTERCEPTING FEATURED DROPS ]</div>
                 <div class="vault-grid">
-                    <div class="vault-card vault-reveal" onclick="triggerSmoothTransition('streetwear')">
-                        <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80" alt="Streetwear Segment">
-                        <h3>Streetwear Collection</h3>
-                        <p>Oversized fits, drop-shoulders, and boxy designs.</p>
-                        <button>EXTRACT</button>
+                    <div class="vault-card vault-reveal tilt-card" style="transition-delay: 0s;" onclick="triggerSmoothTransition('streetwear')">
+                        <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80" alt="Offer">
+                        <h3>Acid Wash Series</h3>
+                        <p>Oversized fits re-engineered for the street.</p>
+                        <button>EXPLORE</button>
                     </div>
-                    <div class="vault-card vault-reveal" style="transition-delay: 0.1s;" onclick="triggerSmoothTransition('premium')">
-                        <img src="https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80" alt="Premium Segment">
-                        <h3>Premium Archives</h3>
-                        <p>Authentic Levi's denim, refined linen, and tailored luxury.</p>
-                        <button>EXTRACT</button>
+                    <div class="vault-card vault-reveal tilt-card" style="transition-delay: 0.1s;" onclick="triggerSmoothTransition('premium')">
+                        <img src="https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80" alt="Offer">
+                        <h3>Premium Denim</h3>
+                        <p>Authentic Levi's & High-end archives.</p>
+                        <button>ACCESS</button>
                     </div>
-                    <div class="vault-card vault-reveal" style="transition-delay: 0.2s;" onclick="triggerSmoothTransition('youth')">
-                        <img src="https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=600&q=80" alt="Youth Segment">
-                        <h3>Youth Manifest</h3>
-                        <p>Futuristic designs and comfort scaling for next-gen fashion.</p>
-                        <button>EXTRACT</button>
+                    <div class="vault-card vault-reveal tilt-card" style="transition-delay: 0.2s;" onclick="triggerSmoothTransition('youth')">
+                        <img src="https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=600&q=80" alt="Offer">
+                        <h3>Youth Protocol</h3>
+                        <p>Street aesthetics scaled for the next generation.</p>
+                        <button>VIEW</button>
                     </div>
                 </div>
             </div>
         </section>
 
         <section id="streetwear" class="page-section">
-            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/STREETWEAR</div><h1>Streetwear Matrix</h1></div>
+            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/STREETWEAR</div><h1>Streetwear</h1></div>
             <div class="tech-filters" id="streetwear-filters">
-                <button class="t-filter active" onclick="applySubFilter('streetwear', 'all', this)">[ ALL DROPS ]</button>
-                <button class="t-filter" onclick="applySubFilter('streetwear', 'oversized', this)">[ OVERSIZED TEES ]</button>
-                <button class="t-filter" onclick="applySubFilter('streetwear', 'graphic', this)">[ GRAPHIC TEES ]</button>
-                <button class="t-filter" onclick="applySubFilter('streetwear', 'polo', this)">[ PREMIUM POLOS ]</button>
-                <button class="t-filter" onclick="applySubFilter('streetwear', 'cargo', this)">[ CARGO PANTS ]</button>
-                <button class="t-filter" onclick="applySubFilter('streetwear', 'jeans', this)">[ BAGGY JEANS ]</button>
-                <button class="t-filter" onclick="applySubFilter('streetwear', 'coord', this)">[ CO-ORD SETS ]</button>
+                <button class="t-filter active" onclick="applySubFilter('streetwear', 'all', this)">[ ALL STREETWEAR ]</button>
+                <button class="t-filter" onclick="applySubFilter('streetwear', 'oversize', this)">[ OVERSIZE TEES ]</button>
+                <button class="t-filter" onclick="applySubFilter('streetwear', 'jeans', this)">[ JEANS ]</button>
+                <button class="t-filter" onclick="applySubFilter('streetwear', 'cargo', this)">[ CARGOS ]</button>
             </div>
             <div class="product-grid" id="streetwearGrid"></div>
         </section>
 
         <section id="premium" class="page-section">
-            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/PREMIUM</div><h1>Premium Brands</h1></div>
+            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/PREMIUM</div><h1>Premium</h1></div>
             <div class="tech-filters" id="premium-filters">
-                <button class="t-filter active" onclick="applySubFilter('premium', 'all', this)">[ ALL COLLECTION ]</button>
-                <button class="t-filter" onclick="applySubFilter('premium', 'rl_polo', this)">[ RALPH LAUREN POLOS ]</button>
-                <button class="t-filter" onclick="applySubFilter('premium', 'luxury_shirt', this)">[ LUXURY CASUAL SHIRTS ]</button>
-                <button class="t-filter" onclick="applySubFilter('premium', 'high_denim', this)">[ HIGH-END DENIM ]</button>
-                <button class="t-filter" onclick="applySubFilter('premium', 'exec', this)">[ EXECUTIVE WEAR ]</button>
+                <button class="t-filter active" onclick="applySubFilter('premium', 'all', this)">[ ALL PREMIUM ]</button>
+                <button class="t-filter" onclick="applySubFilter('premium', 'polo', this)">[ BRANDS ]</button>
+                <button class="t-filter" onclick="applySubFilter('premium', 'jeans', this)">[ LEVI'S ]</button>
             </div>
             <div class="product-grid" id="premiumGrid"></div>
         </section>
 
         <section id="youth" class="page-section">
-            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/YOUTH</div><h1>Youth Protocol</h1></div>
+            <div class="section-header-tech reveal-up"><div class="sys-info">DIR: /ARCHIVE/YOUTH</div><h1>Youth</h1></div>
             <div class="tech-filters" id="youth-filters">
-                <button class="t-filter active" onclick="applySubFilter('youth', 'all', this)">[ ALL METRICS ]</button>
-                <button class="t-filter" onclick="applySubFilter('youth', 'graphic', this)">[ GRAPHIC TEES ]</button>
-                <button class="t-filter" onclick="applySubFilter('youth', 'hoodie', this)">[ YOUNG HOODIES ]</button>
-                <button class="t-filter" onclick="applySubFilter('youth', 'oversize', this)">[ OVERSIZED STREET ]</button>
-                <button class="t-filter" onclick="applySubFilter('youth', 'denim', this)">[ DENIM COLLECTION ]</button>
+                <button class="t-filter active" onclick="applySubFilter('youth', 'all', this)">[ ALL YOUTH ]</button>
+                <button class="t-filter" onclick="applySubFilter('youth', 'tee', this)">[ TEES ]</button>
+                <button class="t-filter" onclick="applySubFilter('youth', 'jeans', this)">[ DENIM ]</button>
             </div>
             <div class="product-grid" id="youthGrid"></div>
         </section>
     </main>
 
-    <footer><p>SYS.DEV: USAMA OUTFITTERS // REGISTERED TERMINAL SECURE MAPPED // 2026</p></footer>
+    <footer><p>SYS.DEV: USAMA OUTFITTERS // KARACHI // SECURE NETWORK</p></footer>
 
     <script>
-        // --- LUXURY POSITION POINTER TRAILING SYSTEM ---
-        const cursorDot = document.getElementById("cursorDot");
-        const cursorRing = document.getElementById("cursorRing");
-        let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-        let ringX = mouseX, ringY = mouseY;
-
-        if(window.matchMedia("(hover: hover)").matches) {
-            document.addEventListener("mousemove", (e) => {
-                mouseX = e.clientX; mouseY = e.clientY;
-                cursorDot.style.left = `${mouseX}px`; cursorDot.style.top = `${mouseY}px`;
-            });
-            function updateCustomCursor() {
-                ringX += (mouseX - ringX) * 0.15; ringY += (mouseY - ringY) * 0.15;
-                cursorRing.style.left = `${ringX}px`; cursorRing.style.top = `${ringY}px`;
-                requestAnimationFrame(updateCustomCursor);
-            }
-            requestAnimationFrame(updateCustomCursor);
-
-            // Dynamic binding to global inputs
-            document.addEventListener("mouseover", (e) => {
-                if(e.target.closest("button, a, .tilt-card")) {
-                    cursorRing.style.width = "55px"; cursorRing.style.height = "55px";
-                    cursorRing.style.background = "rgba(224, 255, 0, 0.08)";
-                }
-            });
-            document.addEventListener("mouseout", (e) => {
-                if(e.target.closest("button, a, .tilt-card")) {
-                    cursorRing.style.width = "34px"; cursorRing.style.height = "34px";
-                    cursorRing.style.background = "transparent";
-                }
-            });
-        }
-
-        // --- CYBER DECODE TEXT SURPRISE MECHANISM ---
-        const cyphers = "X01Y98Z76A54B32C10D89E76FDF4578#@%&*";
-        function decodeTerminalText(element) {
-            let cycles = 0;
-            const finalString = element.dataset.value;
-            clearInterval(element.cryptoTimer);
-            
-            element.cryptoTimer = setInterval(() => {
-                element.innerText = finalString.split("").map((char, index) => {
-                    if(index < cycles) return finalString[index];
-                    return cyphers[Math.floor(Math.random() * cyphers.length)];
-                }).join("");
-                if(cycles >= finalString.length) clearInterval(element.cryptoTimer);
-                cycles += 1 / 3;
-            }, 25);
-        }
-
-        // --- 100% EXHAUSTIVE CATALOG MATRIX ---
+        // --- 100% ACCURATE INVENTORY EXPANSION ---
         const catalog = [
-            // STREETWEAR - 10 OVERSIZED ITEMS
-            { id: 's_o1', name: 'Acid Wash Boxy Fit', price: 1899, subType: 'oversized', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o2', name: 'Heavy French Terry Blank', price: 1950, subType: 'oversized', section: 'streetwear', badge: 'CORE', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o3', name: 'Cyberpunk Drop-Shoulder', price: 1999, subType: 'oversized', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o4', name: 'Distressed Vintage Faded', price: 2100, subType: 'oversized', section: 'streetwear', badge: 'ARCHIVE', img: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o5', name: 'Minimal Solid Boxy Tee', price: 1650, subType: 'oversized', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1618517351616-3898bd307a52?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o6', name: 'Raw Edge Street Top', price: 1799, subType: 'oversized', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1564859228273-274232fdb516?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o7', name: 'Neon Accent Tech Tee', price: 1999, subType: 'oversized', section: 'streetwear', badge: 'LIMITED', img: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o8', name: 'Enzyme Washed Carbon', price: 1850, subType: 'oversized', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o9', name: 'Unisex Relaxed Street Tee', price: 1690, subType: 'oversized', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_o10', name: 'Knitted Heavy Street Shirt', price: 2300, subType: 'oversized', section: 'streetwear', badge: 'PREMIUM', img: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80' },
+            // STREETWEAR - TOPS (10 Oversized + Others)
+            { id: 's_o1', name: 'Acid Wash Oversize', price: 1899, subCategory: 'oversize', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o2', name: 'Heavy Boxy Blank', price: 1699, subCategory: 'oversize', section: 'streetwear', badge: 'CORE', img: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o3', name: 'Graphic Drop-Shoulder', price: 1999, subCategory: 'oversize', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o4', name: 'Vintage Faded Oversize', price: 2100, subCategory: 'oversize', section: 'streetwear', badge: 'ARCHIVE', img: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o5', name: 'Earth Tone Drop-Tee', price: 1799, subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1564859228273-274232fdb516?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o6', name: 'Minimalist Boxy Shirt', price: 1599, subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1618517351616-3898bd307a52?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o7', name: 'Retro Print Oversize', price: 1899, subCategory: 'oversize', section: 'streetwear', badge: 'LIMITED', img: 'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o8', name: 'Washed Black Boxy', price: 1899, subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o9', name: 'Typography Drop-Shoulder', price: 1999, subCategory: 'oversize', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_o10', name: 'Pastel Oversized Top', price: 1799, subCategory: 'oversize', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80' },
             
-            // GRAPHIC, POLOS, BOTTOMS, CO-ORDS
-            { id: 's_g1', name: 'Tokyo Neon Graphic', price: 1799, subType: 'graphic', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_p1', name: 'Pique Ribbed Polo', price: 2200, subType: 'polo', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1586363104862-3a5e222ee1eb?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_c1', name: 'Multi-Pocket Technical Cargo', price: 3400, subType: 'cargo', section: 'streetwear', badge: 'TACTICAL', img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_j1', name: 'Y2K Raw Baggy Denim', price: 3899, subType: 'jeans', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=80' },
-            { id: 's_co1', name: 'Technical Utility Co-Ord Set', price: 5500, subType: 'coord', section: 'streetwear', badge: 'DROP', img: 'https://images.unsplash.com/photo-1555689502-c4b22d76c56f?auto=format&fit=crop&w=600&q=80' },
+            // STREETWEAR - BOTTOMS
+            { id: 's_b1', name: 'Distressed Street Jeans', price: 3499, subCategory: 'jeans', section: 'streetwear', badge: 'HOT', img: 'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_b2', name: 'Baggy Parachute Cargo', price: 3200, subCategory: 'cargo', section: 'streetwear', badge: 'NEW', img: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=600&q=80' },
+            { id: 's_b3', name: 'Relaxed Fit Chino', price: 2199, subCategory: 'chino', section: 'streetwear', badge: '', img: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80' },
 
-            // PREMIUM COLLECTION
-            { id: 'p_r1', name: 'RL Signature Fit Polo', price: 6500, subType: 'rl_polo', section: 'premium', badge: 'RALPH LAUREN', img: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?auto=format&fit=crop&w=600&q=80' },
-            { id: 'p_l1', name: 'Premium Oxford Cotton', price: 4500, subType: 'luxury_shirt', section: 'premium', badge: 'EXECUTIVE', img: 'https://images.unsplash.com/photo-1598032895397-b9472444bf93?auto=format&fit=crop&w=600&q=80' },
-            { id: 'p_d1', name: "Levi's Selvedge High Denim", price: 8500, subType: 'high_denim', section: 'premium', badge: "LEVI'S 501", img: 'https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80' },
-            { id: 'p_e1', name: 'Structured Tapered Chinos', price: 4800, subType: 'exec', section: 'premium', badge: 'SMART CASUAL', img: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80' },
+            // PREMIUM (Brands)
+            { id: 'p_t1', name: 'Ralph Lauren Classic Polo', price: 6200, subCategory: 'polo', section: 'premium', badge: 'RALPH LAUREN', img: 'https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?auto=format&fit=crop&w=600&q=80' },
+            { id: 'p_t2', name: 'Hugo Boss Linen Shirt', price: 8500, subCategory: 'polo', section: 'premium', badge: 'HUGO BOSS', img: 'https://images.unsplash.com/photo-1598032895397-b9472444bf93?auto=format&fit=crop&w=600&q=80' },
+            { id: 'p_b1', name: "Levi's 501 Original Jeans", price: 8500, subCategory: 'jeans', section: 'premium', badge: "LEVI'S", img: 'https://images.unsplash.com/photo-1602293589930-45aad59ba3ab?auto=format&fit=crop&w=600&q=80' },
+            { id: 'p_b2', name: 'Stone Island Cargo', price: 14500, subCategory: 'jeans', section: 'premium', badge: 'STONE ISLAND', img: 'https://images.unsplash.com/photo-1555689502-c4b22d76c56f?auto=format&fit=crop&w=600&q=80' },
 
-            // YOUTH ARCHIVE
-            { id: 'y_g1', name: 'Youth Pop Art Graphic', price: 1299, subType: 'graphic', section: 'youth', badge: 'NEW', img: 'https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=600&q=80' },
-            { id: 'y_h1', name: 'Core Fleece Cyber Hoodie', price: 2499, subType: 'hoodie', section: 'youth', badge: 'WARM', img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=600&q=80' },
-            { id: 'y_o1', name: 'Scaled Down Boxy Tee', price: 1499, subType: 'oversize', section: 'youth', badge: '', img: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=600&q=80' },
-            { id: 'y_d1', name: 'Youth Stretch Relaxed Jeans', price: 1899, subType: 'denim', section: 'youth', badge: 'FLEX', img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80' }
+            // YOUTH (Kids)
+            { id: 'y_t1', name: 'Kids Graphic Tee', price: 1299, subCategory: 'tee', section: 'youth', badge: 'NEW', img: 'https://images.unsplash.com/photo-1622290319146-7b63df48a635?auto=format&fit=crop&w=600&q=80' },
+            { id: 'y_t2', name: 'Boys Classic Shirt', price: 1499, subCategory: 'tee', section: 'youth', badge: '', img: 'https://images.unsplash.com/photo-1514090288891-b3b0dff171a5?auto=format&fit=crop&w=600&q=80' },
+            { id: 'y_b1', name: 'Mini Stretch Denim', price: 1899, subCategory: 'jeans', section: 'youth', badge: 'HOT', img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=600&q=80' },
+            { id: 'y_b2', name: 'Youth Cargo Shorts', price: 2199, subCategory: 'jeans', section: 'youth', badge: '', img: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=600&q=80' }
         ];
 
-        // Specific quality specifications arrays for quick matching
-        const specsDatabase = {
-            'oversized': { fabric: '100% French Terry Cotton (240 GSM)', fit: 'Boxy / Drop-Shoulder', breathability: '9/10', comfort: '10/10', durability: '9/10', badges: ['Premium Heavyweight', 'Fade Resistant', 'Soft Touch'] },
-            'graphic': { fabric: '100% Combed Organic Cotton', fit: 'Modern Street Fit', breathability: '8/10', comfort: '9/10', durability: '8/10', badges: ['High Density Print', 'Breathable Material'] },
-            'polo': { fabric: 'Double Pique Knit Cotton', fit: 'Athletic Fitted', breathability: '9/10', comfort: '8/10', durability: '9/10', badges: ['Premium Stitching', 'Shape Retention'] },
-            'cargo': { fabric: 'Reinforced Ripstop Weave Cotton Blend', fit: 'Loose / Articulated Joints', breathability: '7/10', comfort: '8/10', durability: '10/10', badges: ['Long Lasting Quality', 'Imported Fabric'] },
-            'baggy': { fabric: '14.5oz Genuine Rigid Indigo Denim', fit: 'Wide-Leg Silhouette', breathability: '6/10', comfort: '8/10', durability: '10/10', badges: ['Authentic Selvedge', 'Heavyweight'] },
-            'coord': { fabric: 'Tech-Nylon Stretch Polymer', fit: 'Relaxed Athleisure Fit', breathability: '10/10', comfort: '9/10', durability: '8/10', badges: ['Quick Dry Technology', 'Quality Assured'] },
-            'rl_polo': { fabric: '100% Premium Cotton Mesh', fit: 'Custom Slim Fit Line', breathability: '9/10', comfort: '9/10', durability: '9/10', badges: ['Imported Luxury', 'Iconic Weave'] },
-            'luxury_shirt': { fabric: 'Long-Staple Egyptian Cotton', fit: 'Sleek Tailored Contour', breathability: '8/10', comfort: '9/10', durability: '9/10', badges: ['Luxury Feel', 'Easy Iron Polish'] },
-            'high_denim': { fabric: 'Premium Japanese Stretch Denim', fit: 'Slim Straight Profile', breathability: '7/10', comfort: '9/10', durability: '10/10', badges: ['Flexible Recovery', 'Artisanal Wash'] },
-            'exec': { fabric: 'Refined Wool & Elastane Interlock', fit: 'Smart Straight Taper', breathability: '8/10', comfort: '9/10', durability: '9/10', badges: ['Wrinkle Shield', 'Premium Executive'] },
-            'hoodie': { fabric: 'Heavy Brushed Back Fleece', fit: 'Slouchy Cozy Oversize', breathability: '6/10', comfort: '10/10', durability: '9/10', badges: ['Insulated Core', 'Extra Soft Touch'] },
-            'denim': { fabric: 'Flex-Weave Active Kids Cotton Denim', fit: 'Comfort Straight Fit', breathability: '8/10', comfort: '9/10', durability: '10/10', badges: ['Youth Reinforced', 'Active Movement'] },
-            'tee': { fabric: 'Organic Cotton Jersey Blend', fit: 'Regular Casual Fit', breathability: '9/10', comfort: '9/10', durability: '8/10', badges: ['Soft Touch', 'Daily Wear Flex'] }
-        };
+        let cart = [];
+        let activeSection = 'home';
+        let currentSubFilter = 'all';
 
-        let currentSectionFilter = 'all';
-
-        // --- APP REGISTRATION SYSTEMS ---
+        // --- INIT & SCROLL ---
         window.addEventListener('load', () => {
-            if(!sessionStorage.getItem('introPlayed')) {
-                const intro = document.getElementById('cinematic-intro');
-                setTimeout(() => {
-                    intro.classList.add('opening');
-                    setTimeout(() => {
-                        intro.style.display = 'none';
-                        sessionStorage.setItem('introPlayed', 'true');
-                        bootSystems();
-                    }, 1000);
-                }, 3200);
-            } else {
-                document.getElementById('cinematic-intro').style.display = 'none';
-                const loader = document.getElementById('preloader');
-                loader.style.display = 'flex';
-                setTimeout(() => { loader.style.opacity = '0'; setTimeout(()=>loader.style.display='none', 600); }, 600);
-                bootSystems();
-            }
+            setTimeout(() => {
+                document.getElementById('preloader').style.opacity = '0';
+                document.getElementById('preloader').style.filter = 'blur(10px)';
+                setTimeout(() => document.getElementById('preloader').style.display = 'none', 800);
+            }, 1200);
+            
+            if(window.matchMedia("(hover: hover)").matches) setupHero3D();
+            setupScrollReveals();
+            renderProducts('streetwear');
+            renderProducts('premium');
+            renderProducts('youth');
         });
 
-        function bootSystems() {
-            if(window.matchMedia("(hover: hover)").matches) init3DSceneMovement();
-            initIntersectionObserver();
-            ['streetwear', 'premium', 'youth'].forEach(sec => populateProductGrids(sec));
-            document.querySelectorAll('.decode-text').forEach(el => decodeTerminalText(el));
+        if(window.matchMedia("(hover: hover)").matches) {
+            document.addEventListener('mousemove', (e) => {
+                const glow = document.getElementById('cursor-glow');
+                glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px';
+            });
         }
 
-        function initIntersectionObserver() {
-            const spyObserver = new IntersectionObserver((entries) => {
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+
+        function setupScrollReveals() {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('in-view');
-                        if(entry.target.classList.contains('decode-text')) decodeTerminalText(entry.target);
+                        if(entry.target.classList.contains('vault-card')) applyTiltToElement(entry.target);
                     }
                 });
             }, { threshold: 0.1 });
-            document.querySelectorAll('.reveal-up, .vault-reveal, .section-header-tech h1').forEach(el => spyObserver.observe(el));
+            document.querySelectorAll('.reveal-up, .vault-reveal').forEach(el => observer.observe(el));
         }
 
-        function init3DSceneMovement() {
-            const frame = document.querySelector('.hero-container');
-            const depthGroup = document.getElementById('scene3D');
-            const layerText = document.querySelector('.hero-focal-text');
-            
-            frame.addEventListener('mousemove', (e) => {
-                const boundary = frame.getBoundingClientRect();
-                const computeX = (e.clientX - boundary.left) / boundary.width - 0.5;
-                const computeY = (e.clientY - boundary.top) / boundary.height - 0.5;
-                
-                depthGroup.style.transform = `rotateY(${computeX * 12}deg) rotateX(${-computeY * 12}deg)`;
-                layerText.style.transform = `translateZ(100px) translate(${computeX * -25}px, ${computeY * -25}px)`;
+        function setupHero3D() {
+            const hero = document.getElementById('heroScene');
+            const scene = document.getElementById('scene3D');
+            hero.addEventListener('mousemove', (e) => {
+                const rect = hero.getBoundingClientRect();
+                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                const rotateX = ((y - (rect.height / 2)) / (rect.height / 2)) * -10;
+                const rotateY = ((x - (rect.width / 2)) / (rect.width / 2)) * 10;
+                scene.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
             });
-            frame.addEventListener('mouseleave', () => {
-                depthGroup.style.transform = `rotateY(0deg) rotateX(0deg)`;
-                layerText.style.transform = `translateZ(100px) translate(0px, 0px)`;
-            });
+            hero.addEventListener('mouseleave', () => { scene.style.transform = `rotateX(0deg) rotateY(0deg)`; });
         }
 
-        // --- SPA CROSS-SWEEP INTERFACES ---
-        function triggerSmoothTransition(targetPage) {
-            if(activeSection === targetPage) return;
-            const gate = document.getElementById('cyber-transition');
-            gate.classList.remove('done'); gate.classList.add('active');
+        // --- NAVIGATION ---
+        function triggerSmoothTransition(pageId) {
+            if(activeSection === pageId) return;
+            const trans = document.getElementById('cyber-transition');
+            trans.classList.remove('done'); trans.classList.add('active');
             
             setTimeout(() => {
-                executeSpaSwap(targetPage);
-                gate.classList.remove('active'); gate.classList.add('done');
+                showPage(pageId);
+                trans.classList.remove('active'); trans.classList.add('done');
             }, 500);
         }
 
@@ -695,7 +556,7 @@
         function toggleMobileMenu() { document.getElementById('mobileNav').classList.toggle('active'); }
         function mobileNavTransition(pageId) { toggleMobileMenu(); setTimeout(() => triggerSmoothTransition(pageId), 300); }
 
-        function executeSpaSwap(pageId) {
+        function showPage(pageId) {
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             
@@ -703,165 +564,162 @@
                 btn.classList.remove('active');
                 if (btn.textContent.toLowerCase().includes(pageId) || (pageId==='home' && btn.textContent.includes('ARCHIVE'))) btn.classList.add('active');
             });
-            activeSection = pageId; window.scrollTo({ top: 0 }); 
+            activeSection = pageId; window.scrollTo({ top: 0, behavior: 'auto' }); 
         }
 
-        // --- RENDERING PIPELINE ---
-        function applySubFilter(section, subsetId, triggerBtn) {
-            currentSectionFilter = subsetId;
-            const filterBar = document.getElementById(`${section}-filters`);
-            filterBar.querySelectorAll('.t-filter').forEach(b => b.classList.remove('active'));
-            triggerBtn.classList.add('active');
+        // --- FILTER & RENDER ---
+        function applySubFilter(section, subId, btn) {
+            currentSubFilter = subId;
+            const container = document.getElementById(`${section}-filters`);
+            container.querySelectorAll('.t-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderProducts(section);
             
-            populateProductGrids(section);
-            
-            const targetedGrid = document.getElementById(`${section}Grid`);
-            targetedGrid.className = 'product-grid stagger-burst'; 
-            void targetedGrid.offsetWidth; // Hard reflow to burst stagger animations
+            // Re-trigger animation
+            const grid = document.getElementById(`${section}Grid`);
+            grid.className = 'product-grid stagger-burst'; 
+            void grid.offsetWidth;
         }
 
-        function populateProductGrids(section) {
-            const displayBox = document.getElementById(`${section}Grid`);
-            const pool = catalog.filter(p => p.section === section && (currentSectionFilter === 'all' || p.subType === currentSectionFilter));
+        function renderProducts(section) {
+            const container = document.getElementById(`${section}Grid`);
+            const filtered = catalog.filter(p => p.section === section && (currentSubFilter === 'all' || p.subType === currentSubFilter));
 
-            if(pool.length === 0) {
-                displayBox.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-gray); font-family: var(--font-tech); text-align: center; margin-top: 50px;">[ FILE NOT LOCATED / ERROR 404 ]</p>`;
+            if(filtered.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; color: var(--text-gray); font-family: var(--font-tech); text-align: center; margin-top: 50px;">[ 0 RECORDS FOUND ]</p>`;
                 return;
             }
 
-            displayBox.innerHTML = pool.map((item, index) => {
-                const activeTag = item.badge ? `<div class="sys-badge">${item.badge}</div>` : '';
+            container.innerHTML = filtered.map((p, i) => {
+                const badge = p.badge ? `<div class="sys-badge">${p.badge}</div>` : '';
                 return `
-                    <div class="tilt-card" style="animation-delay: ${index * 0.05}s;" onclick="openProductModal('${item.id}')">
-                        ${activeTag}
-                        <div class="card-img-wrapper"><img src="${item.img}" alt="${item.name}" loading="lazy"></div>
+                    <div class="tilt-card" style="animation-delay: ${i * 0.1}s;" onclick="openProductModal('${p.id}')">
+                        ${badge}
+                        <div class="card-img-wrapper">
+                            <img src="${p.img}" alt="${p.name}" loading="lazy">
+                        </div>
                         <div class="card-info">
-                            <div class="card-meta"><div class="card-category">[ ${item.subType} ]</div><div class="card-price">PKR ${item.price}</div></div>
-                            <div class="card-title" style="margin-top:10px;">${item.name}</div>
+                            <div class="card-meta"><div class="card-category">[ ${p.subType} ]</div><div class="card-price">PKR ${p.price}</div></div>
+                            <div class="card-title" style="margin-top:10px;">${p.name}</div>
                         </div>
                     </div>
                 `;
             }).join('');
             
-            if(window.matchMedia("(hover: hover)").matches) {
-                displayBox.querySelectorAll('.tilt-card').forEach(card => bindCardRotation(card));
-            }
+            document.querySelectorAll('.tilt-card').forEach(card => applyTiltToElement(card));
         }
 
-        function bindCardRotation(element) {
-            element.addEventListener('mousemove', e => {
-                const perimeter = element.getBoundingClientRect();
-                const pointerX = e.clientX - perimeter.left, pointerY = e.clientY - perimeter.top;
-                const forceX = ((pointerY - (perimeter.height / 2)) / (perimeter.height / 2)) * -8; 
-                const forceY = ((pointerX - (perimeter.width / 2)) / (perimeter.width / 2)) * 8;
-                element.style.transform = `perspective(1000px) rotateX(${forceX}deg) rotateY(${forceY}deg) scale3d(1.02, 1.02, 1.02)`;
+        function applyTiltToElement(card) {
+            if(!window.matchMedia("(hover: hover)").matches) return; 
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                const rotateX = ((y - (rect.height / 2)) / (rect.height / 2)) * -8; 
+                const rotateY = ((x - (rect.width / 2)) / (rect.width / 2)) * 8;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
             });
-            element.addEventListener('mouseleave', () => {
-                element.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
             });
         }
 
-        // --- FULL DETAIL EXTRACTOR (MODAL SYSTEM) ---
-        function openProductModal(skuId) {
-            const match = catalog.find(x => x.id === skuId);
-            if(!match) return;
+        // --- MAGICAL PRODUCT MODAL ---
+        function getQualityDesc(subType) {
+            const descs = {
+                'oversize': "Constructed with 100% heavyweight 240gsm French Terry Cotton for an ultra-premium drape. Garment-dyed and enzyme washed for a vintage feel that ages perfectly.",
+                'jeans': "Cut from raw 14oz selvedge denim. Engineered for extreme durability with custom reinforced stitching and authentic metal hardware.",
+                'cargo': "Made from ripstop military-grade cotton blend. Features articulated knees and adjustable cuffs for optimal utility and streetwear aesthetics.",
+                'tee': "Knitted from long-staple organic cotton. Exceptionally soft hand-feel with anti-pilling technology to maintain its shape wash after wash."
+            };
+            return descs[subType] || "Engineered with premium, sustainably sourced fabrics. Tailored for an impeccable fit and long-lasting durability in the urban environment.";
+        }
 
-            document.getElementById('modalTitle').innerText = match.name;
-            document.getElementById('modalTitle').dataset.value = match.name;
-            decodeTerminalText(document.getElementById('modalTitle'));
+        function openProductModal(id) {
+            const p = catalog.find(x => x.id === id);
+            if(!p) return;
 
-            document.getElementById('modalPrice').innerText = `PKR ${match.price}`;
-            document.getElementById('modalBadge').innerText = match.badge ? `[ STATUS: ${match.badge} ]` : `[ DIRECTORY: ${match.section.toUpperCase()} ]`;
+            document.getElementById('modalTitle').innerText = p.name;
+            document.getElementById('modalPrice').innerText = `PKR ${p.price}`;
+            document.getElementById('modalBadge').innerText = `[ DIR: ${p.section.toUpperCase()} / ${p.subCategory.toUpperCase()} ]`;
+            document.getElementById('modalDesc').innerText = getQualityDesc(p.subCategory);
             
+            // Build 3 image views from the same high-res source using CSS magic
             document.getElementById('modalGallery').innerHTML = `
-                <img src="${match.img}" class="modal-img" alt="${match.name} Primary Isometric">
-                <img src="${match.img}" class="modal-img" alt="${match.name} Textures Segment">
-                <img src="${match.img}" class="modal-img" alt="${match.name} Profile Spec Sheet">
+                <img src="${p.img}" class="modal-img" alt="${p.name}">
+                <img src="${p.img}" class="modal-img" alt="${p.name} Texture">
+                <img src="${p.img}" class="modal-img" alt="${p.name} Edit">
             `;
 
-            const specs = specsDatabase[match.subType] || specsDatabase['tee']; 
-            document.getElementById('modalSpecs').innerHTML = `
-                <div class="spec-item"><span class="spec-label">COMPOSITION</span><span class="spec-value">${specs.fabric}</span></div>
-                <div class="spec-item"><span class="spec-label">FIT PROFILE</span><span class="spec-value">${specs.fit}</span></div>
-                <div class="spec-item"><span class="spec-label">BREATHABILITY RATIO</span><span class="spec-value">${specs.breathability}</span></div>
-                <div class="spec-item"><span class="spec-label">COMFORT DEGREE</span><span class="spec-value">${specs.comfort}</span></div>
-                <div class="spec-item"><span class="spec-label">DURABILITY SHIELD</span><span class="spec-value">${specs.durability}</span></div>
-                <div class="spec-item"><span class="spec-label">WASH MANAGEMENT</span><span class="spec-value">${specs.care}</span></div>
-            `;
-            
-            document.getElementById('modalQualityBadges').innerHTML = specs.badges.map(b => `<span class="quality-badge">${b}</span>`).join('');
-
-            const basketAction = document.getElementById('modalAddToCart');
-            basketAction.onclick = () => { addToCart(skuId); closeModal(); };
+            // Setup Add to Cart inside modal
+            const btn = document.getElementById('modalAddToCart');
+            btn.onclick = () => { addToCart(id); closeModal(); };
 
             document.getElementById('productModal').classList.add('active');
-            bindMagneticWrapper();
+            
+            // Trigger the Magnetic Button effect
+            setupMagneticButton();
         }
 
-        function closeModal() { document.getElementById('productModal').classList.remove('active'); }
+        function closeModal() {
+            document.getElementById('productModal').classList.remove('active');
+        }
 
-        function bindMagneticWrapper() {
+        // Magnetic Button Effect
+        function setupMagneticButton() {
             if(!window.matchMedia("(hover: hover)").matches) return;
-            const containerBox = document.getElementById('magneticWrap');
-            const targetBtn = document.getElementById('modalAddToCart');
+            const wrap = document.getElementById('magneticWrap');
+            const btn = document.getElementById('modalAddToCart');
             
-            const scrubbedContainer = containerBox.cloneNode(true);
-            containerBox.parentNode.replaceChild(scrubbedContainer, containerBox);
-            const verifiedButton = scrubbedContainer.querySelector('.magnetic-btn');
-            
-            scrubbedContainer.addEventListener('mousemove', (ev) => {
-                const border = scrubbedContainer.getBoundingClientRect();
-                const calculatedX = (ev.clientX - border.left) - (border.width / 2);
-                const calculatedY = (ev.clientY - border.top) - (border.height / 2);
-                verifiedButton.style.transform = `translate(${calculatedX * 0.3}px, ${calculatedY * 0.3}px)`;
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const x = (e.clientX - rect.left) - (rect.width / 2);
+                const y = (e.clientY - rect.top) - (rect.height / 2);
+                
+                // Pull button towards cursor
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
             });
-            scrubbedContainer.addEventListener('mouseleave', () => {
-                verifiedButton.style.transform = `translate(0px, 0px)`;
+            wrap.addEventListener('mouseleave', () => {
+                btn.style.transform = `translate(0px, 0px)`;
             });
-            verifiedButton.onclick = document.getElementById('modalAddToCart').onclick;
         }
 
-        // --- CART SYSTEM MATRIX ---
+        // --- CART SYSTEM ---
         function toggleCart() {
             document.getElementById('cartSidebar').classList.toggle('open');
             document.getElementById('cartOverlay').classList.toggle('open');
         }
 
         function addToCart(id) {
-            const targetedItem = catalog.find(p => p.id === id);
-            cart.push(targetedItem);
-            rebuildCartDOM();
+            const item = catalog.find(p => p.id === id);
+            cart.push(item);
+            updateCartUI();
             if(!document.getElementById('cartSidebar').classList.contains('open')) toggleCart();
         }
 
-        function removeFromCart(targetIdx) { cart.splice(targetIdx, 1); rebuildCartDOM(); }
+        function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
 
-        function rebuildCartDOM() {
+        function updateCartUI() {
             document.getElementById('cartCount').innerText = cart.length;
-            const itemStream = document.getElementById('cartItems');
-            let aggregateSum = 0;
-            
+            const container = document.getElementById('cartItems');
+            let total = 0;
             if (cart.length === 0) {
-                itemStream.innerHTML = `<p style="color:var(--text-gray); font-family:var(--font-tech); font-size:11px;">[ BUFFER EMPTY / NO PAYLOAD ]</p>`;
+                container.innerHTML = `<p style="color:var(--text-gray); font-family:var(--font-tech); font-size:11px;">[ NO ITEMS DETECTED ]</p>`;
             } else {
-                itemStream.innerHTML = cart.map((item, position) => {
-                    aggregateSum += item.price;
-                    return `<div class="cart-item"><img src="${item.img}" alt="${item.name}"><div class="cart-item-details"><div class="cart-item-title">${item.name}</div><div class="cart-item-price">PKR ${item.price}</div><button class="remove-item" onclick="removeFromCart(${position})">[ DISCARD ]</button></div></div>`;
+                container.innerHTML = cart.map((item, i) => {
+                    total += item.price;
+                    return `<div class="cart-item"><img src="${item.img}" alt="${item.name}"><div class="cart-item-details"><div class="cart-item-title">${item.name}</div><div class="cart-item-price">PKR ${item.price}</div><button class="remove-item" onclick="removeFromCart(${i})">[ REMOVE ]</button></div></div>`;
                 }).join('');
             }
-            document.getElementById('cartTotalText').innerText = `PKR ${aggregateSum}`;
+            document.getElementById('cartTotalText').innerText = `PKR ${total}`;
         }
 
         function checkoutWhatsApp() {
-            if(cart.length === 0) return alert("Payload Stream is empty.");
-            let payloadText = "SECURE PAYLOAD TRANSMISSION - USAMA OUTFITTERS:\n\n";
-            let computationalTotal = 0;
-            cart.forEach((element, index) => { 
-                payloadText += `NODE [${index+1}] // SKUID: ${element.id} // ${element.name} - PKR ${element.price}\n`; 
-                computationalTotal += element.price; 
-            });
-            payloadText += `\n*TOTAL DISPLACEMENT: PKR ${computationalTotal}*\nRequesting secure asset release confirmation.`;
-            window.open(`https://wa.me/923001234567?text=${encodeURIComponent(payloadText)}`, '_blank');
+            if(cart.length === 0) return alert("System Bag is empty.");
+            let text = "INITIATING ORDER - Usama Outfitters:\n\n";
+            let total = 0;
+            cart.forEach((item, i) => { text += `[${i+1}] ${item.name} - PKR ${item.price}\n`; total += item.price; });
+            text += `\n*TOTAL: PKR ${total}*\nRequesting availability check.`;
+            window.open(`https://wa.me/923001234567?text=${encodeURIComponent(text)}`, '_blank');
         }
     </script>
 </body>
